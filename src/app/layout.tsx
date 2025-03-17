@@ -1,6 +1,7 @@
+//var/www/html/nvrs-ts-v1/src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "./ui/styles/globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

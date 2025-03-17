@@ -1,3 +1,4 @@
+//var/www/html/nvrs-ts-v1/src/app/types/menu.ts
 // Frontend types - these represent how the data will be used in the UI
 export interface MenuItem {
     item_id: number;
@@ -5,7 +6,7 @@ export interface MenuItem {
     item_desc: string;
     price: number;
     item_type: string;
-    imageUrl?: string; // Frontend-specific property for image display
+    image_id?: number; // Frontend-specific property for image display
 }
 
 // If you need frontend-specific type utilities
