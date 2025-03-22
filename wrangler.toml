@@ -1,21 +1,15 @@
-# wrangler.toml - Cloudflare configuration file
+# wrangler.toml - Cloudflare configuration for static export
 name = "nvrs-ts-v1"
 compatibility_date = "2025-03-21"
 
+# Static asset configuration
+[site]
+bucket = "./out"
+
+# Build configuration
 [build]
 command = "npm run build"
-upload.format = "directory"
 
-[site]
-bucket = ".next/static"
-entry-point = "."
-
+# Environment configuration
 [env.production]
 workers_dev = true
-
-# Next.js needs these headers
-[build.upload]
-format = "service-worker"
-
-[build.environment]
-NODE_VERSION = "20.0.0"
