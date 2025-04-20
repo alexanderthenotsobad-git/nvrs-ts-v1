@@ -5,15 +5,16 @@ import { useState, useEffect } from 'react'
 import type { MenuItem } from '@/types/menu'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/ui/dialog'
 import { Button } from '@/ui/button'
 import ImageUpload from './ImageUpload'
+import NativeDialog from './NativeDialog'
 
 const MenuList = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   //const [openDialogId, setOpenDialogId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -109,33 +110,29 @@ const MenuList = () => {
               <p className="text-gray-600 mb-4 line-clamp-2">{item.item_desc}</p>
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold">${formatPrice(item.price)}</span>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedItem(item)}
-                    >
+                <NativeDialog
+                  trigger={
+                    <Button variant="outline" size="sm">
                       {item.image_id ? 'Change Image' : 'Add Image'}
                     </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>
-                        {item.image_id ? 'Update Image' : 'Add Image'} for {item.item_name}
-                      </DialogTitle>
-                      <DialogDescription>
-                        Upload a new image for this menu item. Supported formats: JPG, PNG.
-                      </DialogDescription>
-                    </DialogHeader>
-                    {selectedItem && selectedItem.item_id === item.item_id && (
-                      <ImageUpload
-                        menuItemId={selectedItem.item_id}
-                        onUploadSuccess={handleImageUploadSuccess}
-                      />
-                    )}
-                  </DialogContent>
-                </Dialog>
+                  }
+                  title={`${item.image_id ? 'Update Image' : 'Add Image'} for ${item.item_name}`}
+                  description="Upload a new image for this menu item. Supported formats: JPG, PNG."
+                  isOpen={isDialogOpen && selectedItem?.item_id === item.item_id}
+                  onOpenChange={(open) => {
+                    setIsDialogOpen(open);
+                    if (open) {
+                      setSelectedItem(item);
+                    }
+                  }}
+                >
+                  {selectedItem && (
+                    <ImageUpload
+                      menuItemId={item.item_id}
+                      onUploadSuccess={handleImageUploadSuccess}
+                    />
+                  )}
+                </NativeDialog>
               </div>
             </CardContent>
           </Card>
