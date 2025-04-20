@@ -1,5 +1,6 @@
 //var/www/html/nvrs-ts-v1/src/
 import MenuList from '@/ui/components/MenuList';
+import NativeDialogTest from '@/ui/components/nativeDialogTest';
 import Image from 'next/image';
 
 export default function Home() {
@@ -19,6 +20,8 @@ export default function Home() {
             Virtual Restaurant Solutions
           </h1>
         </div>
+        {/* Test Dialog Component */}
+        <NativeDialogTest />
         <MenuList />
       </div>
     </main>

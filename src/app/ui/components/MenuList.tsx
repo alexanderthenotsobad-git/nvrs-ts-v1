@@ -1,15 +1,20 @@
-// src/app/components/MenuList.tsx
+// /var/www/html/nvrs-ts-v1/src/app/ui/components/MenuList.tsx
 "use client"
 
 import { useState, useEffect } from 'react'
 import type { MenuItem } from '@/types/menu'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/ui/dialog'
+import { Button } from '@/ui/button'
+import ImageUpload from './ImageUpload'
 
 const MenuList = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
+  //const [openDialogId, setOpenDialogId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -39,6 +44,19 @@ const MenuList = () => {
     const numPrice = typeof price === 'string' ? parseFloat(price) : price
     return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2)
   }
+
+  const handleImageUploadSuccess = (imageId: number) => {
+    if (!selectedItem) return;
+
+    // Update the menu item in the state with the new image ID
+    const updatedItems = menuItems.map(item =>
+      item.item_id === selectedItem.item_id
+        ? { ...item, image_id: imageId }
+        : item
+    );
+
+    setMenuItems(updatedItems);
+  };
 
   if (loading) {
     return (
@@ -75,19 +93,49 @@ const MenuList = () => {
               <div className="mb-4 h-32 relative overflow-hidden rounded-md">
                 {item.image_id ? (
                   <Image
-                    src={`https://api.alexanderthenotsobad.us/api/images/menu-item/${item.image_id}`}
+                    src={`https://api.alexanderthenotsobad.us/api/images/${item.image_id}`}
                     alt={item.item_name}
-                    width={100}
-                    height={100}
-                    className="object-cover"
+                    width={200}
+                    height={200}
+                    className="object-cover w-full h-full"
                     unoptimized={true}
                   />
-                ) : null}
+                ) : (
+                  <div className="flex items-center justify-center h-full bg-gray-100 text-gray-400">
+                    No image available
+                  </div>
+                )}
               </div>
               <p className="text-gray-600 mb-4 line-clamp-2">{item.item_desc}</p>
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold">${formatPrice(item.price)}</span>
-                {/*<span className="text-sm text-gray-500">{item.item_type}</span>*/}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSelectedItem(item)}
+                    >
+                      {item.image_id ? 'Change Image' : 'Add Image'}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>
+                        {item.image_id ? 'Update Image' : 'Add Image'} for {item.item_name}
+                      </DialogTitle>
+                      <DialogDescription>
+                        Upload a new image for this menu item. Supported formats: JPG, PNG.
+                      </DialogDescription>
+                    </DialogHeader>
+                    {selectedItem && selectedItem.item_id === item.item_id && (
+                      <ImageUpload
+                        menuItemId={selectedItem.item_id}
+                        onUploadSuccess={handleImageUploadSuccess}
+                      />
+                    )}
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardContent>
           </Card>
