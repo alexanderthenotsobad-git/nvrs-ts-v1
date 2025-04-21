@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/ui/button'
-import NativeDialog from './NativeDialog'
+import NativeDialog from './AddItemDialog'
 
 interface MenuItemFormData {
     item_name: string;
@@ -53,7 +53,7 @@ const AddMenuItem = ({ onItemAdded }: AddMenuItemProps) => {
             }
 
             // Send data to API
-            const response = await fetch('https://api.alexanderthenotsobad.us/createManuItem', {
+            const response = await fetch('https://api.alexanderthenotsobad.us/createMenuItem', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

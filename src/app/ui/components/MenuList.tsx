@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card'
 import { Button } from '@/ui/button'
 import ImageUpload from './ImageUpload'
-import NativeDialog from './NativeDialog'
+import AddItemDialog from './AddItemDialog'
 
 const MenuList = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([])
@@ -110,7 +110,7 @@ const MenuList = () => {
               <p className="text-gray-600 mb-4 line-clamp-2">{item.item_desc}</p>
               <div className="flex justify-between items-center">
                 <span className="text-2xl font-bold">${formatPrice(item.price)}</span>
-                <NativeDialog
+                <AddItemDialog
                   trigger={
                     <Button variant="outline" size="sm">
                       {item.image_id ? 'Change Image' : 'Add Image'}
@@ -132,7 +132,7 @@ const MenuList = () => {
                       onUploadSuccess={handleImageUploadSuccess}
                     />
                   )}
-                </NativeDialog>
+                </AddItemDialog>
               </div>
             </CardContent>
           </Card>

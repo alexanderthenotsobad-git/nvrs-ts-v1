@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/components/NativeDialog.tsx
+// /var/www/html/nvrs-ts-v1/src/app/ui/components/AddItemDialog.tsx
 "use client"
 
 import { useRef, useEffect, ReactNode } from 'react'
@@ -13,7 +13,7 @@ interface NativeDialogProps {
     onOpenChange?: (open: boolean) => void;
 }
 
-const NativeDialog = ({
+const AddItemDialog = ({
     trigger,
     title,
     description,
@@ -84,4 +84,4 @@ const NativeDialog = ({
     )
 }
 
-export default NativeDialog
+export default AddItemDialog
