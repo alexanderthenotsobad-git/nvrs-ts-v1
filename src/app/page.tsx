@@ -1,4 +1,4 @@
-//var/www/html/nvrs-ts-v1/src/
+//var/www/html/nvrs-ts-v1/src/app/page.tsx
 "use client"
 
 import MenuList from '@/ui/components/MenuList';

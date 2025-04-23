@@ -1,4 +1,4 @@
-// src/app/components/ui/card.tsx
+// /var/www/nvrs-ts-v1/src/app/components/ui/card.tsx
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
