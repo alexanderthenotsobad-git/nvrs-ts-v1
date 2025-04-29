@@ -1,16 +1,9 @@
-// src/app/ui/components/DeleteMenuItem.tsx
+// /var/www/html/nvrs-ts-v1/src/app/ui/components/DeleteMenuItem.tsx
 "use client"
 
 import { useState } from 'react'
 import { Button } from '@/ui/button'
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter
-} from '@/ui/radix-dialog'
+import AddItemDialog from './AddItemDialog'
 import type { MenuItem } from '@/types/menu'
 
 interface DeleteMenuItemProps {
@@ -46,49 +39,43 @@ const DeleteMenuItem = ({ menuItem, onDeleteSuccess }: DeleteMenuItemProps) => {
     }
 
     return (
-        <>
-            <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => setIsOpen(true)}
-            >
-                Delete
-            </Button>
+        <AddItemDialog
+            trigger={
+                <Button
+                    variant="destructive"
+                    size="sm"
+                >
+                    Delete
+                </Button>
+            }
+            title="Delete Menu Item"
+            description={`Are you sure you want to delete "${menuItem.item_name}"? This action cannot be undone.`}
+            isOpen={isOpen}
+            onOpenChange={setIsOpen}
+        >
+            <div className="space-y-4">
+                {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
 
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Delete Menu Item</DialogTitle>
-                        <DialogDescription>
-                            Are you sure you want to delete `{menuItem.item_name}`? This action cannot be undone.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="py-4">
-                        {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
-
-                        <DialogFooter>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setIsOpen(false)}
-                                disabled={loading}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                onClick={handleDelete}
-                                disabled={loading}
-                            >
-                                {loading ? "Deleting..." : "Delete Item"}
-                            </Button>
-                        </DialogFooter>
-                    </div>
-                </DialogContent>
-            </Dialog>
-        </>
+                <div className="flex justify-end space-x-2">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsOpen(false)}
+                        disabled={loading}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        onClick={handleDelete}
+                        disabled={loading}
+                    >
+                        {loading ? "Deleting..." : "Delete Item"}
+                    </Button>
+                </div>
+            </div>
+        </AddItemDialog>
     )
 }
 
