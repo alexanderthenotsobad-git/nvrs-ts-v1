@@ -18,8 +18,9 @@
 import { useState } from 'react';
 import { useOrderTray } from '@/context/OrderTrayContext';
 import { Button } from '@/ui/button';
-import { ShoppingCart, Check, Plus, Minus } from 'lucide-react';
+import { Check, Plus, Minus } from 'lucide-react';
 import type { MenuItem } from '@/types/menu';
+import TrayIcon from '@/ui/icons/TrayIcon';
 
 // Props definition
 interface AddToOrderButtonProps {
@@ -39,6 +40,10 @@ const AddToOrderButton = ({ menuItem }: AddToOrderButtonProps) => {
      * Shows visual feedback and resets after a delay
      */
     const handleAddToOrder = () => {
+        console.log('AddToOrderButton - handleAddToOrder clicked');
+        console.log('Menu item:', menuItem);
+        console.log('Quantity:', quantity);
+
         // Add the item to the order (this will also open the order tray panel)
         addToOrder(menuItem, quantity);
 
@@ -104,8 +109,8 @@ const AddToOrderButton = ({ menuItem }: AddToOrderButtonProps) => {
                     </>
                 ) : (
                     <>
-                        <ShoppingCart size={16} className="mr-1" />
-                        Add to Order
+                        <TrayIcon size={16} className="mr-1" />
+                        Add to Tray
                     </>
                 )}
             </Button>

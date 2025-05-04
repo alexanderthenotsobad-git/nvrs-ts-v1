@@ -19,7 +19,8 @@
 
 import { useOrderTray } from '@/context/OrderTrayContext';
 import { Button } from '@/ui/button';
-import { ShoppingCart, X, Minus, Plus, Trash2 } from 'lucide-react';
+import { X, Minus, Plus, Trash2 } from 'lucide-react';
+import TrayIcon from '@/ui/icons/TrayIcon';
 
 const OrderTrayPanel = () => {
     // Get order state and functions from context
@@ -33,11 +34,6 @@ const OrderTrayPanel = () => {
         isOrderTrayOpen,
         toggleOrderTray
     } = useOrderTray();
-
-    // State for managing special instructions input
-    // Commented out for now - will be used in future implementation
-    // const [showSpecialInstructions, setShowSpecialInstructions] = useState<number | null>(null);
-    // const [specialInstructions, setSpecialInstructions] = useState<string>('');
 
     /**
      * Format a price number to a string with 2 decimal places
@@ -79,7 +75,7 @@ const OrderTrayPanel = () => {
                     className="h-14 w-14 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg flex items-center justify-center"
                     aria-label="Open order tray"
                 >
-                    <ShoppingCart className="h-6 w-6" />
+                    <TrayIcon size={24} className="text-white" />
                     {/* Badge showing number of items when there are items in the order */}
                     {getTotalItems() > 0 && (
                         <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
@@ -99,8 +95,8 @@ const OrderTrayPanel = () => {
                     {/* Header Section with Title and Close Button */}
                     <div className="p-4 border-b flex items-center justify-between bg-gray-50">
                         <div className="flex items-center">
-                            <ShoppingCart className="h-5 w-5 mr-2" />
-                            <h2 className="text-xl font-semibold">Your Order</h2>
+                            <TrayIcon size={20} className="mr-2" />
+                            <h2 className="text-xl font-semibold">Your Order Tray</h2>
                             {/* Item count badge */}
                             {getTotalItems() > 0 && (
                                 <span className="ml-2 bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full">
@@ -123,8 +119,8 @@ const OrderTrayPanel = () => {
                         {/* Empty state when no items in order */}
                         {orderItems.length === 0 ? (
                             <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                                <ShoppingCart className="h-12 w-12 mb-2 opacity-30" />
-                                <p>Your order is empty</p>
+                                <TrayIcon size={48} className="mb-2 opacity-30" />
+                                <p>Your order tray is empty</p>
                                 <Button
                                     variant="outline"
                                     className="mt-4"
@@ -212,7 +208,7 @@ const OrderTrayPanel = () => {
                                     variant="outline"
                                     onClick={clearOrder}
                                 >
-                                    Clear Order
+                                    Clear Tray
                                 </Button>
                                 <Button
                                     onClick={handleSubmitOrder}

@@ -108,6 +108,8 @@ export const OrderTrayProvider = ({ children }: { children: ReactNode }) => {
      */
     const addToOrder = (menuItem: MenuItem, quantity: number, specialInstructions?: string) => {
         setOrderItems(prevItems => {
+            //console.log to check process flow
+            console.log('Before adding to order: ', { orderItems, isOrderTrayOpen });
             // Check if item already exists in order
             const existingItemIndex = prevItems.findIndex(item => item.item_id === menuItem.item_id);
 
