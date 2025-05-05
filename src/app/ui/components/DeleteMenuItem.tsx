@@ -16,6 +16,7 @@ const DeleteMenuItem = ({ menuItem, onDeleteSuccess }: DeleteMenuItemProps) => {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
+    // Updated handleDelete function for DeleteMenuItem.tsx
     const handleDelete = async () => {
         setLoading(true)
         setError(null)
@@ -23,6 +24,12 @@ const DeleteMenuItem = ({ menuItem, onDeleteSuccess }: DeleteMenuItemProps) => {
         try {
             const response = await fetch(`https://api.alexanderthenotsobad.us/menu/${menuItem.item_id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    item_name: menuItem.item_name
+                })
             })
 
             if (!response.ok) {
