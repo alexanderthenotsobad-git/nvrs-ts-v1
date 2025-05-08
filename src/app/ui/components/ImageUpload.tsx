@@ -21,6 +21,7 @@ const ImageUpload = ({ menuItemId, onUploadSuccess }: ImageUploadProps) => {
         }
     }
 
+    // Updated handleUpload function in 
     const handleUpload = async () => {
         if (!file) {
             setError('Please select a file')
@@ -31,6 +32,27 @@ const ImageUpload = ({ menuItemId, onUploadSuccess }: ImageUploadProps) => {
         setError(null)
 
         try {
+            // Step 1: First delete any existing images for this menu item
+            console.log(`Attempting to delete existing images for menu item ${menuItemId}`)
+
+            try {
+                const deleteResponse = await fetch(`https://api.alexanderthenotsobad.us/api/images/menu-item/${menuItemId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!deleteResponse.ok) {
+                    console.warn('Delete response was not OK:', deleteResponse.status);
+                } else {
+                    const deleteResult = await deleteResponse.json();
+                    console.log('Delete result:', deleteResult);
+                }
+            } catch (deleteErr) {
+                console.error('Error during delete operation:', deleteErr);
+                // Continue with upload even if delete fails
+            }
+
+            // Step 2: Now upload the new image
+            console.log('Proceeding with image upload');
             const formData = new FormData()
             formData.append('image', file)
 
@@ -44,9 +66,11 @@ const ImageUpload = ({ menuItemId, onUploadSuccess }: ImageUploadProps) => {
             }
 
             const result = await response.json()
+            console.log('Upload result:', result);
             setFile(null)
             onUploadSuccess(result.imageId)
         } catch (err) {
+            console.error('Error in upload process:', err);
             setError(err instanceof Error ? err.message : 'An error occurred')
         } finally {
             setLoading(false)

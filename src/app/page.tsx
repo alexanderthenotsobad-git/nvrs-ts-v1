@@ -1,9 +1,9 @@
-//var/www/html/nvrs-ts-v1/src/app/page.tsx
+// /var/www/html/nvrs-ts-v1/src/app/page.tsx
 "use client"
 
 import { useState, useEffect } from 'react';
-import MenuList from '@/ui/components/MenuList';
 import Image from 'next/image';
+import MenuList from '@/ui/components/MenuList';
 import Navbar from '@/ui/components/Navbar';
 import AddMenuItem from '@/ui/components/AddMenuItem';
 import UserInfo from '@/ui/components/UserInfo';
@@ -16,6 +16,24 @@ const HomePage = () => {
   const { userRole } = useUserRole();
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
   const [previousRole, setPreviousRole] = useState<UserRole>('none');
+  const [windowWidth, setWindowWidth] = useState(0);
+
+  // Initialize window width and set up listener for resize
+  useEffect(() => {
+    // Set initial width
+    setWindowWidth(window.innerWidth);
+
+    // Handle resize events
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Clean up
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Show welcome dialog when user logs in
   useEffect(() => {
@@ -30,18 +48,25 @@ const HomePage = () => {
     window.location.reload();
   };
 
+  // Determine which logo to show based on screen width
+  const logoSrc = windowWidth < 768 ? '/VRS_logo_mobile.png' : '/VRS_logo_desktop.png';
+
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="container mx-auto py-8">
         <div className="flex flex-col items-center mb-8">
-          <Image
-            src="/VRS_Logo.png"
-            alt="Virtual Restaurant Solutions Logo"
-            width={500}
-            height={200}
-            className="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] h-auto"
-            priority
-          />
+          <div className="w-full flex justify-center">
+            {windowWidth > 0 && (
+              <Image
+                src={logoSrc}
+                alt="Virtual Restaurant Solutions Logo"
+                width={windowWidth < 768 ? 300 : 500}
+                height={windowWidth < 768 ? 120 : 200}
+                className="w-auto"
+                priority
+              />
+            )}
+          </div>
           <Navbar />
 
           <h1 className="text-4xl font-bold text-center mt-4">
