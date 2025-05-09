@@ -158,6 +158,7 @@ const MenuList = () => {
                   menuItem={item}
                   onDeleteSuccess={handleMenuItemDelete}
                 />
+
                 <AddItemDialog
                   trigger={
                     <Button variant="outline" size="sm">
@@ -178,6 +179,7 @@ const MenuList = () => {
                     <ImageUpload
                       menuItemId={item.item_id}
                       onUploadSuccess={handleImageUploadSuccess}
+                      currentImageId={item.image_id} // Add this prop to pass the current image ID
                     />
                   )}
                 </AddItemDialog>

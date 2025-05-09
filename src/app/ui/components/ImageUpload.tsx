@@ -1,5 +1,4 @@
 // /var/www/html/nvrs-ts-v1/src/app/ui/components/ImageUpload.tsx
-"use client"
 
 import { useState } from 'react'
 import { Button } from '@/ui/button'
@@ -7,9 +6,10 @@ import { Button } from '@/ui/button'
 interface ImageUploadProps {
     menuItemId: number
     onUploadSuccess: (imageId: number) => void
+    currentImageId?: number // Added property to track the current image ID
 }
 
-const ImageUpload = ({ menuItemId, onUploadSuccess }: ImageUploadProps) => {
+const ImageUpload = ({ menuItemId, onUploadSuccess, currentImageId }: ImageUploadProps) => {
     const [file, setFile] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -21,7 +21,6 @@ const ImageUpload = ({ menuItemId, onUploadSuccess }: ImageUploadProps) => {
         }
     }
 
-    // Updated handleUpload function in 
     const handleUpload = async () => {
         if (!file) {
             setError('Please select a file')
@@ -32,23 +31,35 @@ const ImageUpload = ({ menuItemId, onUploadSuccess }: ImageUploadProps) => {
         setError(null)
 
         try {
-            // Step 1: First delete any existing images for this menu item
-            console.log(`Attempting to delete existing images for menu item ${menuItemId}`)
+            // Step 1: If we have a current image ID, delete it first
+            if (currentImageId) {
+                console.log(`Attempting to delete image with ID ${currentImageId}`)
 
-            try {
-                const deleteResponse = await fetch(`https://api.alexanderthenotsobad.us/api/images/menu-item/${menuItemId}`, {
-                    method: 'DELETE'
-                });
+                try {
+                    // Use the new endpoint that deletes by image_id
+                    const deleteResponse = await fetch(`https://api.alexanderthenotsobad.us/api/images/${currentImageId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
 
-                if (!deleteResponse.ok) {
-                    console.warn('Delete response was not OK:', deleteResponse.status);
-                } else {
-                    const deleteResult = await deleteResponse.json();
-                    console.log('Delete result:', deleteResult);
+                    if (!deleteResponse.ok) {
+                        console.warn(`Delete response failed with status: ${deleteResponse.status}`);
+                        // We'll continue with upload even if delete fails, but log the error
+                        if (deleteResponse.headers.get('content-type')?.includes('application/json')) {
+                            const errorData = await deleteResponse.json();
+                            console.warn('Error details:', errorData);
+                        }
+                    } else {
+                        const deleteResult = await deleteResponse.json();
+                        console.log('Delete result:', deleteResult);
+                        console.log(`Successfully deleted image with ID ${currentImageId}`);
+                    }
+                } catch (deleteErr) {
+                    console.error('Error during delete operation:', deleteErr);
+                    // Continue with upload even if delete fails
                 }
-            } catch (deleteErr) {
-                console.error('Error during delete operation:', deleteErr);
-                // Continue with upload even if delete fails
             }
 
             // Step 2: Now upload the new image
