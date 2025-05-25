@@ -75,7 +75,7 @@ const OrderTrayPanel = () => {
                     className="h-14 w-14 rounded-full bg-blue-600 hover:bg-blue-700 shadow-lg flex items-center justify-center"
                     aria-label="Open order tray"
                 >
-                    <TrayIcon size={24} className="text-white" />
+                    {/*<TrayIcon size={24} className="text-white" />*/}
                     {/* Badge showing number of items when there are items in the order */}
                     {getTotalItems() > 0 && (
                         <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs">
@@ -95,7 +95,7 @@ const OrderTrayPanel = () => {
                     {/* Header Section with Title and Close Button */}
                     <div className="p-4 border-b flex items-center justify-between bg-gray-50">
                         <div className="flex items-center">
-                            <TrayIcon size={20} className="mr-2" />
+                            {/*<TrayIcon size={20} className="mr-2" />*/}
                             <h2 className="text-xl font-semibold">Your Order Tray</h2>
                             {/* Item count badge */}
                             {getTotalItems() > 0 && (
