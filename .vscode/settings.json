@@ -1,0 +1,23 @@
+{
+    // Primary disable - covers all file types
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false
+    },
+    // Disable auto-completions specifically
+    "github.copilot.editor.enableAutoCompletions": false,
+    // Disable Next Edit Suggestions (the ghost text)
+    "github.copilot.nextEditSuggestions.enabled": false,
+    // Disable Agent Mode (write access)
+    "github.copilot.chat.agent.enabled": false,
+    // Disable ALL chat-related AI features
+    "chat.agent.enabled": false,
+    "chat.commandCenter.enabled": false,
+    "chat.edits2.enabled": false,
+    // Disable inline chat features
+    "inlineChat.accessibleDiffView": "off",
+    // Disable terminal hints
+    "terminal.integrated.initialHint": false
+}
