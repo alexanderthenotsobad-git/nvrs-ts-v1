@@ -38,9 +38,7 @@ const PatronMenuItem = ({ item }: PatronMenuItemProps) => {
                 <div className="mb-4 h-32 relative overflow-hidden rounded-md">
                     {item.image_id ? (
                         <Image
-                            src={`https://api.alexanderthenotsobad.us/api/images/${item.image_id}`}
-                            alt={item.item_name}
-                            width={200}
+                            src={`${process.env.NEXT_PUBLIC_API_URL}/api/images/${item.image_id}`} width={200}
                             height={200}
                             className="object-cover w-full h-full"
                             unoptimized={true}

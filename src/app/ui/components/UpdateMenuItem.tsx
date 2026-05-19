@@ -39,7 +39,7 @@ const UpdateMenuItem = ({ menuItem, onUpdateSuccess }: UpdateMenuItemProps) => {
                 item_type: itemType
             }
 
-            const response = await fetch(`https://api.alexanderthenotsobad.us/menu/${menuItem.item_id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/menu/${menuItem.item_id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
