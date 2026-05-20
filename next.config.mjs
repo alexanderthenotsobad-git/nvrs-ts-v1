@@ -1,17 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Use static export for better Cloudflare compatibility
-  output: 'export',
-  
-  // Disable image optimization for static export
-  images: {
-    unoptimized: true,
+  experimental: {
+    serverActions: {
+      allowedOrigins: [
+        'localhost',
+        '127.0.0.1',
+        '::1',
+        '208.113.129.7',
+        '*.run.app' // Secure wildcard for Cloud Run domains
+      ],
+    },
   },
-  
-  // Needed for static export
-  trailingSlash: true,
-  
-  // Other recommended settings
+  server: {
+    hostname: '0.0.0.0',
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3002
+  },
+  output: 'standalone',
   reactStrictMode: true,
 };
 

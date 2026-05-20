@@ -60,8 +60,8 @@ const HomePage = () => {
               <Image
                 src={logoSrc}
                 alt="Virtual Restaurant Solutions Logo"
-                width={windowWidth < 768 ? 300 : 500}
-                height={windowWidth < 768 ? 120 : 200}
+                width={windowWidth < 768 ? 300 : 400}
+                height={windowWidth < 768 ? 300 : 400}
                 className="w-auto"
                 priority
               />
