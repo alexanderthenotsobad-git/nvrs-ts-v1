@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/components/MenuList.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/ui/components/MenuList.tsx
 "use client"
 
 import { useState, useEffect } from 'react'
@@ -29,7 +29,7 @@ const MenuItemDisplay = ({ item }: { item: MenuItem }) => {
         <div className="mb-4 h-32 relative overflow-hidden rounded-md">
           {item.image_id ? (
             <Image
-              src={`https://api.alexanderthenotsobad.us/api/images/${item.image_id}`}
+              src={`https://ai.alexanderthenotsobad.us/api/images/${item.image_id}`}
               alt={item.item_name}
               width={200}
               height={200}
@@ -64,7 +64,7 @@ const MenuList = () => {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await fetch('https://api.alexanderthenotsobad.us/')
+        const response = await fetch('https://ai.alexanderthenotsobad.us/menu')
         if (!response.ok) {
           throw new Error('Failed to fetch menu items')
         }

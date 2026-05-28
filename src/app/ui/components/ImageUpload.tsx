@@ -37,7 +37,7 @@ const ImageUpload = ({ menuItemId, onUploadSuccess, currentImageId }: ImageUploa
 
                 try {
                     // Use the new endpoint that deletes by image_id
-                    const deleteResponse = await fetch(`https://api.alexanderthenotsobad.us/api/images/${currentImageId}`, {
+                    const deleteResponse = await fetch(`https://ai.alexanderthenotsobad.us/api/images/${currentImageId}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ const ImageUpload = ({ menuItemId, onUploadSuccess, currentImageId }: ImageUploa
             const formData = new FormData()
             formData.append('image', file)
 
-            const response = await fetch(`https://api.alexanderthenotsobad.us/api/images/upload/${menuItemId}`, {
+            const response = await fetch(`https://ai.alexanderthenotsobad.us/api/images/upload/${menuItemId}`, {
                 method: 'POST',
                 body: formData,
             })

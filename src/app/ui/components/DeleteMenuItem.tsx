@@ -22,7 +22,7 @@ const DeleteMenuItem = ({ menuItem, onDeleteSuccess }: DeleteMenuItemProps) => {
         setError(null)
 
         try {
-            const response = await fetch(`https://api.alexanderthenotsobad.us/menu/${menuItem.item_id}`, {
+            const response = await fetch(`https://ai.alexanderthenotsobad.us/menu/${menuItem.item_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'

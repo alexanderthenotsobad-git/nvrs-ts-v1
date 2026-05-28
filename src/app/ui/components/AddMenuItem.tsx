@@ -53,7 +53,7 @@ const AddMenuItem = ({ onItemAdded }: AddMenuItemProps) => {
             }
 
             // Send data to API
-            const response = await fetch('https://api.alexanderthenotsobad.us/createMenuItem', {
+            const response = await fetch('https://ai.alexanderthenotsobad.us/createMenuItem', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
