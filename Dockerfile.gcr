@@ -1,0 +1,68 @@
+# =========================================================================
+# STAGE 1: Dependency Installation
+# =========================================================================
+FROM node:20-alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Copy lockfiles and installation definitions
+COPY package.json package-lock.json ./
+
+# Clean production installation of dependencies
+RUN npm ci
+
+# =========================================================================
+# STAGE 2: Application Building for GCR
+# =========================================================================
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Bring in dependencies from Stage 1 safely
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Disable Next.js telemetry collection data to speed up image building
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Catch the build argument passed from deploy.sh
+ARG NEXT_PUBLIC_API_URL
+
+# CRITICAL FIX: Set it as an environment variable for the build process
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+
+# Create .env.production with the actual value (optional but safe)
+RUN echo "NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" > .env.production
+
+# Debug: Show what we're building with
+RUN echo "🔨 Building with NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}"
+
+# Execute a single, clean production build step with the environment active
+RUN npm run build
+
+# =========================================================================
+# STAGE 3: GCR Runtime
+# =========================================================================
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Establish unprivileged system profiles for security containment
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Transfer static asset structures and standalone engine components
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Transition execution context away from root access
+USER nextjs
+
+EXPOSE 3000
+
+# Standalone execution runtime engine start command
+CMD ["node", "server.js"]

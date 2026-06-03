@@ -1,0 +1,23 @@
+[33mcbe5d8d[m Initial commit
+[33m3655e4f[m Update README.md
+[33meea5f00[m Initial commit
+[33m2281bee[m Merge branch 'main' of https://github.com/alexanderthenotsobad-git/nvrs-ts-v1
+[33m333ab59[m Loading images, and card styles
+[33m6cdc21b[m Create .nvmrc
+[33mcd0b174[m Add a static export config for cloudflare pages
+[33m1b74a89[m Added a next.config.mjs file to the project
+[33m98d641f[m Deleted unnecessary file "LoadImages.js"
+[33mfc9c55c[m Delete src/app/LoadImages.js
+[33m6836b45[m Merge branch 'main' of https://github.com/alexanderthenotsobad-git/nvrs-ts-v1
+[33md5dd1b1[m Deleted next.config.mjs
+[33m4a46bbd[m Functional cloudflare deploy
+[33m7fb04f7[m Changed title
+[33m4d700de[m Image upload We have fixed the image upload functionality.
+[33mb4527d3[m Clean up Cleaning up old test files and redundant code
+[33m8238464[m Update menu item Deployed functionality to connect with the RestAPI's updateMenuItems route and endpoint
+[33mbd03cd8[m Order Order Created Context, Components, and Functionality for rendering the Order Tray
+[33mb6d3d2e[m Order Tray Working This itiration has a working Order Tray which updates items and allows to add and delete
+[33me0a546d[m Fixed Delete Item We fixed the deleteMenuItem component by including both item_id, and item_name in the delete request
+[33m1b00819[m Right-sized VRS Logo
+[33meb37df9[m Fixed ImageUpload Finally got the image upload feature to delete the old image and add the new one properly
+[33m44fa3d2[m[33m ([m[1;36mHEAD -> [m[1;32mdev-ai[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/dev-ai[m[33m, [m[1;31morigin/HEAD[m[33m)[m Hide OrderTray Hid the TrayIcon (OrderTray) Icons lingering on the bottom of the menu
