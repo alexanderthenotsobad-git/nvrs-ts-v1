@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/page.tsx
+// /var/www/html/nvrs-ts-v1-dev-ai/src/app/page.tsx
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -60,9 +60,9 @@ const HomePage = () => {
               <Image
                 src={logoSrc}
                 alt="Virtual Restaurant Solutions Logo"
-                width={windowWidth < 768 ? 300 : 500}
-                height={windowWidth < 768 ? 120 : 200}
-                className="w-auto"
+                width={360}
+                height={3600}
+                className="w-auto h-auto"
                 priority
               />
             )}
