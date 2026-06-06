@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/page.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/page.tsx
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -11,6 +11,7 @@ import WelcomeDialog from '@/ui/components/WelcomeDialog';
 import { UserRoleProvider, useUserRole, UserRole } from '@/context/UserContext';
 import { OrderTrayProvider } from '@/context/OrderTrayContext';
 import OrderTrayPanel from '@/ui/components/OrderTrayPanel';
+import AIChat from '@/components/AIChat';
 
 const HomePage = () => {
   const { userRole } = useUserRole();
@@ -60,9 +61,9 @@ const HomePage = () => {
               <Image
                 src={logoSrc}
                 alt="Virtual Restaurant Solutions Logo"
-                width={windowWidth < 768 ? 300 : 500}
-                height={windowWidth < 768 ? 120 : 200}
-                className="w-auto"
+                width={windowWidth < 768 ? 300 : 350}
+                height={windowWidth < 768 ? 300 : 350}
+                className="w-auto h-auto"
                 priority
               />
             )}
@@ -100,6 +101,9 @@ const HomePage = () => {
         />
       </div>
       <OrderTrayPanel />
+
+      {/* AI Chat Component - Floating button + modal */}
+      <AIChat />
     </main>
   );
 };
