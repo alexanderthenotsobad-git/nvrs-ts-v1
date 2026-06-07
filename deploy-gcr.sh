@@ -6,6 +6,7 @@ REGION="us-central1"
 SERVICE_NAME="nvrs-frontend-dev"
 IMAGE_TAG="us-central1-docker.pkg.dev/${PROJECT_ID}/nvrs-repo/nvrs-frontend:ai-v1"
 API_URL="https://ai.alexanderthenotsobad.us"
+GEMINI_API_KEY="AIzaSyBnekAF2rqawdRvC2NUYN90w5xGYUyNNp0"
 
 echo "🚀 Deploying to Google Cloud Run"
 echo "📦 Service: ${SERVICE_NAME}"
@@ -24,7 +25,7 @@ gcloud run deploy "${SERVICE_NAME}" \
   --image="${IMAGE_TAG}" \
   --region="${REGION}" \
   --project="${PROJECT_ID}" \
-  --set-env-vars "NEXT_PUBLIC_API_URL=${API_URL}" \
+  --set-env-vars "NEXT_PUBLIC_API_URL=${API_URL},GEMINI_API_KEY=${GEMINI_API_KEY}" \
   --allow-unauthenticated
 
 docker system prune -a --volumes -f

@@ -11,7 +11,7 @@ import WelcomeDialog from '@/ui/components/WelcomeDialog';
 import { UserRoleProvider, useUserRole, UserRole } from '@/context/UserContext';
 import { OrderTrayProvider } from '@/context/OrderTrayContext';
 import OrderTrayPanel from '@/ui/components/OrderTrayPanel';
-import AIChat from '@/components/AIChat';
+import FloatingAIChat from '@/components/FloatingAIChat';
 
 const HomePage = () => {
   const { userRole } = useUserRole();
@@ -19,24 +19,13 @@ const HomePage = () => {
   const [previousRole, setPreviousRole] = useState<UserRole>('none');
   const [windowWidth, setWindowWidth] = useState(0);
 
-  // Initialize window width and set up listener for resize
   useEffect(() => {
-    // Set initial width
     setWindowWidth(window.innerWidth);
-
-    // Handle resize events
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    // Add event listener
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
-
-    // Clean up
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Show welcome dialog when user logs in
   useEffect(() => {
     if (userRole !== 'none' && userRole !== previousRole) {
       setWelcomeDialogOpen(true);
@@ -45,11 +34,9 @@ const HomePage = () => {
   }, [userRole, previousRole]);
 
   const handleItemAdded = () => {
-    // This will refresh the menu list when a new item is added
     window.location.reload();
   };
 
-  // Determine which logo to show based on screen width
   const logoSrc = windowWidth < 768 ? '/VRS_logo_mobile.png' : '/VRS_logo_desktop.png';
 
   return (
@@ -69,11 +56,9 @@ const HomePage = () => {
             )}
           </div>
           <Navbar />
-
           <h1 className="text-4xl font-bold text-center mt-4">
             Virtual Restaurant Solutions
           </h1>
-
           {userRole !== 'none' && (
             <div className="mt-2 text-lg text-center">
               Logged in as: <span className="font-semibold capitalize">{userRole}</span>
@@ -81,10 +66,8 @@ const HomePage = () => {
           )}
         </div>
 
-        {/* User info section - visible to logged in users */}
         {userRole !== 'none' && <UserInfo />}
 
-        {/* Admin Controls - Only visible to admins */}
         {userRole === 'admin' && (
           <div className="mb-6 flex justify-end">
             <AddMenuItem onItemAdded={handleItemAdded} />
@@ -92,8 +75,6 @@ const HomePage = () => {
         )}
 
         <MenuList />
-
-        {/* Welcome dialog */}
         <WelcomeDialog
           userRole={userRole}
           isOpen={welcomeDialogOpen}
@@ -101,9 +82,7 @@ const HomePage = () => {
         />
       </div>
       <OrderTrayPanel />
-
-      {/* AI Chat Component - Floating button + modal */}
-      <AIChat />
+      <FloatingAIChat />
     </main>
   );
 };
