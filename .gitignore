@@ -172,3 +172,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 >>>>>>> 3655e4f12745cfc4bda02269dfa73ae47082bdfc
+.env.local
+deploy-gcr.sh
