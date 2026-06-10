@@ -1,11 +1,12 @@
 // /var/www/html/nvrs-ts-v1-ai-v1/src/app/api/chat/route.ts
-import { GoogleGenAI } from '@google/genai';
 import { NextRequest } from 'next/server';
 
 // =========================================================================
 // SYSTEM CONFIGURATION ANCHOR: SECURE API GATEWAY DOMAIN CNAME
 // =========================================================================
 const BACKEND_CHEF_DOMAIN = "https://ai.alexanderthenotsobad.us";
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
 
 // Type definitions
 interface IngredientItem {
@@ -33,6 +34,11 @@ interface MenuItem {
     style: string;
 }
 
+interface ChatHistoryMessage {
+    role: string;
+    parts: { text: string }[];
+}
+
 interface EnrichedMenuItem {
     id: number | undefined;
     name: string;
@@ -50,17 +56,13 @@ interface EnrichedMenuItem {
     };
 }
 
-// Initialize Gemini with API key from environment variables
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-// Helper function to fetch and enrich menu data (same as terminal script)
+// Helper function to fetch and enrich menu data
 async function fetchEnrichedDatabaseContext(): Promise<EnrichedMenuItem[]> {
     const menuUrl = `${BACKEND_CHEF_DOMAIN}/menu`;
     const ingredientsUrl = `${BACKEND_CHEF_DOMAIN}/ingredients`;
     const nutritionUrl = `${BACKEND_CHEF_DOMAIN}/nutrition`;
 
     try {
-        // Fetch all three endpoints concurrently
         const [menuRes, ingredientsRes, nutritionRes] = await Promise.all([
             fetch(menuUrl, { headers: { 'Accept': 'application/json' } }),
             fetch(ingredientsUrl, { headers: { 'Accept': 'application/json' } }),
@@ -75,7 +77,6 @@ async function fetchEnrichedDatabaseContext(): Promise<EnrichedMenuItem[]> {
         const ingredientsData: IngredientItem[] = await ingredientsRes.json();
         const nutritionRecords: NutritionRecord[] = await nutritionRes.json();
 
-        // Map ingredients by item_id
         const ingredientsMap: Record<string, string[]> = {};
         if (Array.isArray(ingredientsData)) {
             ingredientsData.forEach((item: IngredientItem) => {
@@ -86,7 +87,6 @@ async function fetchEnrichedDatabaseContext(): Promise<EnrichedMenuItem[]> {
             });
         }
 
-        // Map nutrition by item_id
         const nutritionMap: Record<string, NutritionRecord> = {};
         if (Array.isArray(nutritionRecords)) {
             nutritionRecords.forEach((record: NutritionRecord) => {
@@ -96,7 +96,6 @@ async function fetchEnrichedDatabaseContext(): Promise<EnrichedMenuItem[]> {
             });
         }
 
-        // Stitch everything together
         const enrichedMenu: EnrichedMenuItem[] = (Array.isArray(menuItems) ? menuItems : []).map((item: MenuItem) => {
             const targetId = item.item_id || item.menu_item_id;
             const macros = targetId && nutritionMap[targetId] ? nutritionMap[targetId] : { calories: 0, protein: 0, fat: 0, carbs: 0 };
@@ -131,11 +130,11 @@ export async function POST(request: NextRequest) {
     try {
         const { message, chatHistory = [] } = await request.json();
 
-        // Fetch fresh menu data on every request
+        // Fetch fresh menu data
         const enrichedMenu = await fetchEnrichedDatabaseContext();
         const menuContext = JSON.stringify(enrichedMenu, null, 2);
 
-        const systemInstruction = `You are a professional restaurant nutritional expert and advisor.
+        const systemPrompt = `You are a professional restaurant nutritional expert and advisor.
 
 Cross-reference the patron's request strictly against our real live database menu data provided below.
 Match queries to real items in the data context (such as Nachos, Calamari, Hummus, Shrimp Platter). Quote their exact ingredients and raw database macros.
@@ -143,31 +142,89 @@ Match queries to real items in the data context (such as Nachos, Calamari, Hummu
 Live Database Menu Context:
 ${menuContext}
 
-Be conversational, helpful, and natural. Speak directly to the patron on their phone screen. Do NOT output raw JSON format.`;
+Be conversational, helpful, and natural. Speak directly to the patron on their phone screen. Do NOT output raw JSON format.
 
-        // Build conversation history
-        const contents = [...chatHistory];
-        contents.push({
-            role: 'user',
-            parts: [{ text: message }]
+FORMATTING RULE: When you list multiple menu items, separate each item with a blank line (paragraph break). Example format:
+
+- Shrimp Scampi: 28g protein, 620 calories
+[blank line]
+- Salmon Bowl: 35g protein, 450 calories
+[blank line]
+- Tuna Poke: 32g protein, 380 calories
+
+This makes the response easier to read on a mobile screen.`;
+        // Build conversation messages for DeepSeek
+        // Convert chatHistory from frontend format to DeepSeek format
+        const formattedHistory = chatHistory.map((msg: ChatHistoryMessage) => ({
+            role: msg.role === 'model' ? 'assistant' : msg.role,
+            content: msg.parts[0].text
+        }));
+
+        const messages = [
+            { role: 'system', content: systemPrompt },
+            ...formattedHistory,
+            { role: 'user', content: message }
+        ];
+
+        // Call DeepSeek API with streaming
+        const response = await fetch(DEEPSEEK_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: 'deepseek-v4-flash',
+                messages: messages,
+                stream: true,
+                temperature: 0.7,
+                max_tokens: 2000
+            })
         });
 
-        // Stream the response
-        const responseStream = await ai.models.generateContentStream({
-            model: 'gemini-2.5-flash',
-            contents: contents,
-            config: {
-                systemInstruction: systemInstruction,
-            }
-        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('DeepSeek API error:', response.status, errorText);
+            throw new Error(`DeepSeek API returned ${response.status}`);
+        }
 
         // Create a ReadableStream to stream chunks to the client
         const stream = new ReadableStream({
             async start(controller) {
+                const reader = response.body?.getReader();
+                const decoder = new TextDecoder();
+
+                if (!reader) {
+                    controller.error(new Error('No response body'));
+                    return;
+                }
+
                 try {
-                    for await (const chunk of responseStream) {
-                        const chunkText = chunk.text || '';
-                        controller.enqueue(new TextEncoder().encode(chunkText));
+                    let buffer = '';
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        buffer += decoder.decode(value, { stream: true });
+                        const lines = buffer.split('\n');
+                        buffer = lines.pop() || '';
+
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const data = line.slice(6);
+                                if (data === '[DONE]') continue;
+
+                                try {
+                                    const parsed = JSON.parse(data);
+                                    const content = parsed.choices?.[0]?.delta?.content;
+                                    if (content) {
+                                        controller.enqueue(new TextEncoder().encode(content));
+                                    }
+                                } catch {
+                                    // Skip invalid JSON
+                                }
+                            }
+                        }
                     }
                     controller.close();
                 } catch (error) {
@@ -185,7 +242,7 @@ Be conversational, helpful, and natural. Speak directly to the patron on their p
 
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        console.error(`API Chat Error:`, errorMessage);
+        console.error(`DeepSeek Chat Error:`, errorMessage);
 
         return new Response(
             JSON.stringify({ error: 'The nutritional expert is temporarily unavailable. Please try again.' }),

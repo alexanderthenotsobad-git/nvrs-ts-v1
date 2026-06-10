@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Mic Test</title>
+  </head>
+  <body>
+    <button id="micBtn">Start Mic</button>
+    <p id="result"></p>
+
+    <script>
+      const btn = document.getElementById("micBtn");
+      const result = document.getElementById("result");
+
+      btn.addEventListener("click", () => {
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (!SpeechRecognition) {
+          result.textContent = "Speech recognition not supported";
+          return;
+        }
+
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+
+        recognition.onstart = () => {
+          result.textContent = "Listening...";
+        };
+
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          result.textContent = "You said: " + transcript;
+        };
+
+        recognition.onerror = (event) => {
+          result.textContent = "Error: " + event.error;
+        };
+
+        recognition.start();
+      });
+    </script>
+  </body>
+</html>
