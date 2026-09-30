@@ -4,7 +4,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/ui/button'
-import { UserRole } from '@/context/UserContext'
+import { UserRole } from '../context/UserContext'
 
 interface WelcomeDialogProps {
     userRole: UserRole;

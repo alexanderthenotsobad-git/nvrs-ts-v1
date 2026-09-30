@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/components/ImageUpload.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/ui/components/ImageUpload.tsx
 
 import { useState } from 'react'
 import { Button } from '@/ui/button'

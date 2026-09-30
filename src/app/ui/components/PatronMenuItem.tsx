@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/components/PatronMenuItem.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/ui/components/PatronMenuItem.tsx
 "use client"
 
 import { useEffect } from 'react'
@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card'
 import type { MenuItem } from '@/types/menu'
 import AddToOrderButton from './AddToOrderButton'
-import { useOrderTray } from '@/context/OrderTrayContext'
+import { useOrderTray } from '../context/OrderTrayContext'
 
 interface PatronMenuItemProps {
     item: MenuItem;

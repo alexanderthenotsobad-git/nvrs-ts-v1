@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/components/AddToOrderButton.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/ui/components/AddToOrderButton.tsx
 "use client"
 
 /**
@@ -16,7 +16,7 @@
  */
 
 import { useState } from 'react';
-import { useOrderTray } from '@/context/OrderTrayContext';
+import { useOrderTray } from '../context/OrderTrayContext';
 import { Button } from '@/ui/button';
 import { Check, Plus, Minus } from 'lucide-react';
 import type { MenuItem } from '@/types/menu';

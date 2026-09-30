@@ -1,9 +1,9 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/components/UserInfo.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/ui/components/UserInfo.tsx
 "use client"
 
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card'
-import { useUserRole } from '@/context/UserContext'
+import { useUserRole } from '../context/UserContext'
 
 const UserInfo = () => {
     const { userRole } = useUserRole()

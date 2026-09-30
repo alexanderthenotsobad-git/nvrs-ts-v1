@@ -1,4 +1,4 @@
-//var/www/html/nvrs-ts-v1/src/app/types/menu.ts
+//var/www/html/nvrs-ts-v1-ai-v1/src/app/types/menu.ts
 // Frontend types - these represent how the data will be used in the UI
 export interface MenuItem {
     item_id: number;

@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/dialog.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/ui/dialog.tsx
 "use client"
 
 import * as React from "react"

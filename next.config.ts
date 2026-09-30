@@ -14,6 +14,15 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   // Enable strict mode for better error catching
   reactStrictMode: true,
+  // API rewrites to backend
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://ai.alexanderthenotsobad.us/api/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

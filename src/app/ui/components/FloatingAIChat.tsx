@@ -4,9 +4,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useChat } from '@/hooks/useChat';
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder';
-import ChatMessages from '@/components/ChatMessages';
-import ChatInput from '@/components/ChatInput';
-import FloatingChatButton from '@/components/FloatingChatButton';
+import ChatMessages from '@/ui/components/ChatMessages';
+import ChatInput from '@/ui/components/ChatInput';
+import FloatingChatButton from '@/ui/components/FloatingChatButton';
 
 export default function FloatingAIChat() {
     const [isOpen, setIsOpen] = useState(false);

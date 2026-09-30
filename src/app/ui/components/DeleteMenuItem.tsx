@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/components/DeleteMenuItem.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/ui/components/DeleteMenuItem.tsx
 "use client"
 
 import { useState } from 'react'

@@ -1,4 +1,4 @@
-//var/www/html/nvrs-ts-v1/src/app/layout.tsx
+//var/www/html/nvrs-ts-v1-ai-v1/src/app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./ui/styles/globals.css";

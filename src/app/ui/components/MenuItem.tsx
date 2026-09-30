@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/components/MenuItem.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/ui/components/MenuItem.tsx
 "use client"
 
 import Image from 'next/image'

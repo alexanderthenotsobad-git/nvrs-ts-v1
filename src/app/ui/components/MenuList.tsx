@@ -11,7 +11,7 @@ import AddItemDialog from './AddItemDialog'
 import UpdateMenuItem from './UpdateMenuItem'
 import DeleteMenuItem from './DeleteMenuItem'
 import AddToOrderButton from './AddToOrderButton'
-import { useUserRole } from '@/context/UserContext'
+import { useUserRole } from '../context/UserContext'
 
 // Simple menu item display component without order functionality
 const MenuItemDisplay = ({ item }: { item: MenuItem }) => {

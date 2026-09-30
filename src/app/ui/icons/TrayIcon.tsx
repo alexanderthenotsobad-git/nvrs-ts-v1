@@ -1,4 +1,4 @@
-// /var/www/html/nvrs-ts-v1/src/app/ui/icons/TrayIcon.tsx
+// /var/www/html/nvrs-ts-v1-ai-v1/src/app/ui/icons/TrayIcon.tsx
 "use client"
 
 interface TrayIconProps {
