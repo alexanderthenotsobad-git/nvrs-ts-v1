@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   // Enable strict mode for better error catching
   reactStrictMode: true,
+  devIndicators: { buildActivity: false, appIsrStatus: false },
 };
 
 export default nextConfig;

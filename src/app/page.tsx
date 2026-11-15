@@ -1,114 +1,53 @@
-// /var/www/html/nvrs-ts-v1-dev-ai/src/app/page.tsx
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import MenuList from '@/ui/components/MenuList';
-import Navbar from '@/ui/components/Navbar';
-import AddMenuItem from '@/ui/components/AddMenuItem';
-import UserInfo from '@/ui/components/UserInfo';
-import WelcomeDialog from '@/ui/components/WelcomeDialog';
-import { UserRoleProvider, useUserRole, UserRole } from '@/context/UserContext';
-import { OrderTrayProvider } from '@/context/OrderTrayContext';
-import OrderTrayPanel from '@/ui/components/OrderTrayPanel';
+import { useState } from "react";
 
-const HomePage = () => {
-  const { userRole } = useUserRole();
-  const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
-  const [previousRole, setPreviousRole] = useState<UserRole>('none');
-  const [windowWidth, setWindowWidth] = useState(0);
+import { AIGuide } from "@/components/ai-guide";
+import { FeaturedDishes } from "@/components/featured-dishes";
+import { Hero } from "@/components/hero";
+import { Marquee } from "@/components/marquee";
+import { MenuSection } from "@/components/menu-section";
+import { MobileTabBar } from "@/components/mobile-tab-bar";
+import { RoomSection } from "@/components/room-section";
+import { SignInPanel } from "@/components/sign-in-panel";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { TableSection } from "@/components/table-section";
+import { ToastProvider } from "@/components/toast";
+import { TrayDrawer } from "@/components/tray-drawer";
+import { OrderTrayProvider } from "@/context/OrderTrayContext";
+import { UserRoleProvider } from "@/context/UserContext";
 
-  // Initialize window width and set up listener for resize
-  useEffect(() => {
-    // Set initial width
-    setWindowWidth(window.innerWidth);
-
-    // Handle resize events
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-
-    // Clean up
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Show welcome dialog when user logs in
-  useEffect(() => {
-    if (userRole !== 'none' && userRole !== previousRole) {
-      setWelcomeDialogOpen(true);
-    }
-    setPreviousRole(userRole);
-  }, [userRole, previousRole]);
-
-  const handleItemAdded = () => {
-    // This will refresh the menu list when a new item is added
-    window.location.reload();
-  };
-
-  // Determine which logo to show based on screen width
-  const logoSrc = windowWidth < 768 ? '/VRS_logo_mobile.png' : '/VRS_logo_desktop.png';
+function Experience() {
+  const [signInOpen, setSignInOpen] = useState(false);
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="container mx-auto py-8">
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-full flex justify-center">
-            {windowWidth > 0 && (
-              <Image
-                src={logoSrc}
-                alt="Virtual Restaurant Solutions Logo"
-                width={360}
-                height={3600}
-                className="w-auto h-auto"
-                priority
-              />
-            )}
-          </div>
-          <Navbar />
-
-          <h1 className="text-4xl font-bold text-center mt-4">
-            Virtual Restaurant Solutions
-          </h1>
-
-          {userRole !== 'none' && (
-            <div className="mt-2 text-lg text-center">
-              Logged in as: <span className="font-semibold capitalize">{userRole}</span>
-            </div>
-          )}
-        </div>
-
-        {/* User info section - visible to logged in users */}
-        {userRole !== 'none' && <UserInfo />}
-
-        {/* Admin Controls - Only visible to admins */}
-        {userRole === 'admin' && (
-          <div className="mb-6 flex justify-end">
-            <AddMenuItem onItemAdded={handleItemAdded} />
-          </div>
-        )}
-
-        <MenuList />
-
-        {/* Welcome dialog */}
-        <WelcomeDialog
-          userRole={userRole}
-          isOpen={welcomeDialogOpen}
-          onClose={() => setWelcomeDialogOpen(false)}
-        />
-      </div>
-      <OrderTrayPanel />
-    </main>
+    <>
+      <SiteHeader onSignIn={() => setSignInOpen(true)} />
+      <main>
+        <Hero />
+        <Marquee />
+        <FeaturedDishes />
+        <MenuSection />
+        <TableSection onSignIn={() => setSignInOpen(true)} />
+        <AIGuide />
+        <RoomSection />
+      </main>
+      <SiteFooter onSignIn={() => setSignInOpen(true)} />
+      <MobileTabBar onSignIn={() => setSignInOpen(true)} />
+      <SignInPanel open={signInOpen} onClose={() => setSignInOpen(false)} />
+      <TrayDrawer />
+    </>
   );
-};
+}
 
 export default function Home() {
   return (
     <UserRoleProvider>
       <OrderTrayProvider>
-        <HomePage />
+        <ToastProvider>
+          <Experience />
+        </ToastProvider>
       </OrderTrayProvider>
     </UserRoleProvider>
   );
