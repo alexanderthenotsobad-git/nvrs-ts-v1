@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
-
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
-      allowedOrigins: ['localhost', '127.0.0.1', '::1', '208.113.129.7'],
+    allowedOrigins: ['localhost', '127.0.0.1', '::1', '208.113.129.7', 'vrs-v2.alexanderthenotsobad.us'],
     },
   },
   // Ensure production optimization

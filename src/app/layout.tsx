@@ -5,7 +5,7 @@ import "@fontsource-variable/fraunces";
 import "./ui/styles/globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ai.alexanderthenotsobad.us"),
+  metadataBase: new URL("https://vrs-v2.alexanderthenotsobad.us"),
   title: "VRS Kitchen & Bar — Order from the table",
   description:
     "A seasonal menu, a tray that remembers, and a table that takes care of the rest. Order from your phone at VRS Kitchen & Bar.",
