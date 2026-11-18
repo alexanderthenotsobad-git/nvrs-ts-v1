@@ -1,0 +1,317 @@
+{
+  "sha": "fd78d0852eeb6415938c4dfc975067f1cd52c68e",
+  "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/fd78d0852eeb6415938c4dfc975067f1cd52c68e",
+  "tree": [
+    {
+      "path": ".gitignore",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "59f6ec07e4093df4dfcba315414eec1d6978c8a9",
+      "size": 64,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/59f6ec07e4093df4dfcba315414eec1d6978c8a9"
+    },
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d1bad1b43ac04fa315ed3f0a031dfd5e6ecd26b7",
+      "size": 1061,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/d1bad1b43ac04fa315ed3f0a031dfd5e6ecd26b7"
+    },
+    {
+      "path": "assets",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "38fa378825775dd6a93713861e5c1e4eb267b9ec",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/38fa378825775dd6a93713861e5c1e4eb267b9ec"
+    },
+    {
+      "path": "assets/beer.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "de76baf13be2f00562d701481ae806ae0c481491",
+      "size": 78827,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/de76baf13be2f00562d701481ae806ae0c481491"
+    },
+    {
+      "path": "clean-build.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "fb2b4dc94c5ceb3abb2e54a0f041294033c9d32e",
+      "size": 709,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/fb2b4dc94c5ceb3abb2e54a0f041294033c9d32e"
+    },
+    {
+      "path": "data",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ee9bd220766e2f40cf2413d3515e91cfce8db032",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/ee9bd220766e2f40cf2413d3515e91cfce8db032"
+    },
+    {
+      "path": "data/beverages.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cfecf8ef806294c326def5e1f8ff2f84d46d413f",
+      "size": 1874,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/cfecf8ef806294c326def5e1f8ff2f84d46d413f"
+    },
+    {
+      "path": "data/menu_item_beverages.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "75506deb3a908b788b30f445ceba22be15aacd45",
+      "size": 7472,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/75506deb3a908b788b30f445ceba22be15aacd45"
+    },
+    {
+      "path": "data/menu_item_nutrition.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7641a9840dbf69d30e8cf2b303dd6342418a58f0",
+      "size": 3950,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/7641a9840dbf69d30e8cf2b303dd6342418a58f0"
+    },
+    {
+      "path": "data/menu_items.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "483404224ac60b028bae8945e29cdc414885e45f",
+      "size": 10226,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/483404224ac60b028bae8945e29cdc414885e45f"
+    },
+    {
+      "path": "docs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a6cfba45e5c109b0f837fffc64037c57f58bde69",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/a6cfba45e5c109b0f837fffc64037c57f58bde69"
+    },
+    {
+      "path": "docs/openapi.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b48a352579c1b28fef56b95f63254d0da20ccc1",
+      "size": 21864,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/0b48a352579c1b28fef56b95f63254d0da20ccc1"
+    },
+    {
+      "path": "docs/tree.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0b165677d77b16a78761120fdf4f6f8d202bf8f4",
+      "size": 3832,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/0b165677d77b16a78761120fdf4f6f8d202bf8f4"
+    },
+    {
+      "path": "package-lock.json",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "942546c6c9d2d36de2aad34af9e38349703e8192",
+      "size": 104674,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/942546c6c9d2d36de2aad34af9e38349703e8192"
+    },
+    {
+      "path": "package.json",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "7c2dfacd834caade164b75d6f294bebb2e5efd27",
+      "size": 1131,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/7c2dfacd834caade164b75d6f294bebb2e5efd27"
+    },
+    {
+      "path": "src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "dbe6a5b54c54681c36ee201afcbf31260266c48f",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/dbe6a5b54c54681c36ee201afcbf31260266c48f"
+    },
+    {
+      "path": "src/app.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4d5559e2ff7930b514bb8bf0f07bede9e952e5ae",
+      "size": 1532,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/4d5559e2ff7930b514bb8bf0f07bede9e952e5ae"
+    },
+    {
+      "path": "src/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "81c79dfc77a9408d7ae8bd1d0a8a172a2d7d31a7",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/81c79dfc77a9408d7ae8bd1d0a8a172a2d7d31a7"
+    },
+    {
+      "path": "src/config/db.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9a2b9ff678a21c904f3a15e3875e592ece8c1e72",
+      "size": 1621,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/9a2b9ff678a21c904f3a15e3875e592ece8c1e72"
+    },
+    {
+      "path": "src/config/swagger.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2071247af02ff0bc1fc22b7873f8e0a669d56e5b",
+      "size": 2107,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/2071247af02ff0bc1fc22b7873f8e0a669d56e5b"
+    },
+    {
+      "path": "src/controllers",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a7b9f79d6da87a938863787600c56d3e9dcc2dc0",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/a7b9f79d6da87a938863787600c56d3e9dcc2dc0"
+    },
+    {
+      "path": "src/controllers/dataImportController.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4a7a71d463432b8369ddf47680b2a5dd16370d19",
+      "size": 6978,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/4a7a71d463432b8369ddf47680b2a5dd16370d19"
+    },
+    {
+      "path": "src/controllers/imageController.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "97c45b63db9f4111db89a31b659a6040cb001653",
+      "size": 5555,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/97c45b63db9f4111db89a31b659a6040cb001653"
+    },
+    {
+      "path": "src/controllers/ingredientController.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "10a61616edb7472dca83dfeb4bc6280163adca5b",
+      "size": 4139,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/10a61616edb7472dca83dfeb4bc6280163adca5b"
+    },
+    {
+      "path": "src/controllers/menuController.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "64308beb0c01db5ab53836df242516264fa220c5",
+      "size": 2599,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/64308beb0c01db5ab53836df242516264fa220c5"
+    },
+    {
+      "path": "src/controllers/paymentController.ts.ignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "464d7108c8b1011ad6ec13c7c25fea3cb3b1baa4",
+      "size": 4334,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/464d7108c8b1011ad6ec13c7c25fea3cb3b1baa4"
+    },
+    {
+      "path": "src/models",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fb632a9f94c3b8e58dc63c39ede08980a7f97a7d",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/fb632a9f94c3b8e58dc63c39ede08980a7f97a7d"
+    },
+    {
+      "path": "src/models/menuItem.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f27d9d417bc80aea342d4fe939d6b49e35263de0",
+      "size": 546,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/f27d9d417bc80aea342d4fe939d6b49e35263de0"
+    },
+    {
+      "path": "src/routes",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ea77afd50a47b27c3aef0d82d2f4b08c08b73bfe",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/ea77afd50a47b27c3aef0d82d2f4b08c08b73bfe"
+    },
+    {
+      "path": "src/routes/dataImportRoutes.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7932acb757273012b40a0df9c740beb53760e09b",
+      "size": 5623,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/7932acb757273012b40a0df9c740beb53760e09b"
+    },
+    {
+      "path": "src/routes/imageRoutes.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "509152a6160cc965dfd5b498d70528d7f40765ef",
+      "size": 7584,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/509152a6160cc965dfd5b498d70528d7f40765ef"
+    },
+    {
+      "path": "src/routes/ingredientRoutes.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2a97cbacedc4c26a97280f342b295669d8e199f3",
+      "size": 3957,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/2a97cbacedc4c26a97280f342b295669d8e199f3"
+    },
+    {
+      "path": "src/routes/menuRoutes.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db4932be8183f140b4e80524f6436514d851aa49",
+      "size": 4071,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/db4932be8183f140b4e80524f6436514d851aa49"
+    },
+    {
+      "path": "src/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0a52d7848b6aeae8660c99277883f78b203e66f1",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/0a52d7848b6aeae8660c99277883f78b203e66f1"
+    },
+    {
+      "path": "src/scripts/generateDocs.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "92d01b6531da697f3898d7a2c421c66673440a52",
+      "size": 533,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/92d01b6531da697f3898d7a2c421c66673440a52"
+    },
+    {
+      "path": "src/scripts/insertImage.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5aab94ca8bb1e8646c94c2c57a8c480fef1158f2",
+      "size": 1646,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/5aab94ca8bb1e8646c94c2c57a8c480fef1158f2"
+    },
+    {
+      "path": "src/services",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "57f00e6874122d9de8d4223cd2c42196a831a4e4",
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/trees/57f00e6874122d9de8d4223cd2c42196a831a4e4"
+    },
+    {
+      "path": "src/services/ingredientService.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "76c6014b2182c0718c129518a0f5ae24ae1f678c",
+      "size": 3081,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/76c6014b2182c0718c129518a0f5ae24ae1f678c"
+    },
+    {
+      "path": "src/services/menuService.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5250532119434d01d3fe2298179f14c96b2bf281",
+      "size": 16650,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/5250532119434d01d3fe2298179f14c96b2bf281"
+    },
+    {
+      "path": "tsconfig.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "05a2dcf338e29c5381a214693a1e93ca3ac1a2b8",
+      "size": 546,
+      "url": "https://api.github.com/repos/alexanderthenotsobad-git/nvrs-RestAPI-TS/git/blobs/05a2dcf338e29c5381a214693a1e93ca3ac1a2b8"
+    }
+  ],
+  "truncated": false
+}

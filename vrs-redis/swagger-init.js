@@ -1,0 +1,2015 @@
+
+window.onload = function() {
+  // Build a system
+  var url = window.location.search.match(/url=([^&]+)/);
+  if (url && url.length > 1) {
+    url = decodeURIComponent(url[1]);
+  } else {
+    url = window.location.origin;
+  }
+  var options = {
+  "swaggerDoc": {
+    "openapi": "3.0.0",
+    "info": {
+      "title": "NVRS Menu API",
+      "version": "1.0.0",
+      "description": "API documentation for Node Virtual Restaurant Solutions",
+      "contact": {
+        "name": "Alexander Gomez"
+      },
+      "license": {
+        "name": "ISC"
+      }
+    },
+    "servers": [
+      {
+        "url": "https://ai.alexanderthenotsobad.us",
+        "description": "Public NVRS API (Apache → localhost:3003)"
+      }
+    ],
+    "security": [],
+    "components": {
+      "schemas": {
+        "MenuItem": {
+          "type": "object",
+          "required": [
+            "item_name",
+            "price",
+            "item_type"
+          ],
+          "properties": {
+            "item_id": {
+              "type": "integer",
+              "description": "The auto-generated id of the menu item"
+            },
+            "item_name": {
+              "type": "string",
+              "description": "The name of the menu item"
+            },
+            "item_desc": {
+              "type": "string",
+              "description": "Description of the menu item"
+            },
+            "price": {
+              "type": "string",
+              "description": "Price as a JSON string (MySQL DECIMAL). Parse with parseFloat before doing arithmetic. Example: \"8.00\".",
+              "example": "8.00"
+            },
+            "item_type": {
+              "type": "string",
+              "description": "Type/category of the menu item"
+            },
+            "dietary_tags": {
+              "type": "string",
+              "description": "Dietary tags, comma-separated when there is more than one (e.g. \"vegan, gluten-free\")",
+              "nullable": true
+            },
+            "style": {
+              "type": "string",
+              "description": "Cuisine style (american, mexican, italian, etc.)",
+              "nullable": true
+            },
+            "rating": {
+              "type": "string",
+              "description": "Average rating as a JSON string (MySQL DECIMAL). Example: \"4.5\".",
+              "nullable": true,
+              "example": "4.5"
+            },
+            "image_id": {
+              "type": "integer",
+              "description": "ID of the associated image",
+              "nullable": true
+            }
+          }
+        },
+        "MenuItemWithIngredients": {
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/MenuItem"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "ingredients": {
+                  "type": "array",
+                  "description": "Ingredients for this menu item, ordered by name",
+                  "items": {
+                    "$ref": "#/components/schemas/IngredientDetail"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "IngredientDetail": {
+          "type": "object",
+          "description": "One ingredient as prepared within a menu item (rows from menu_item_ingredients joined to ingredients).",
+          "properties": {
+            "ingredient_id": {
+              "type": "integer",
+              "description": "The unique identifier of the ingredient"
+            },
+            "ingredient_name": {
+              "type": "string",
+              "description": "Name of the ingredient"
+            },
+            "category": {
+              "type": "string",
+              "enum": [
+                "protein",
+                "vegetable",
+                "spice",
+                "dairy",
+                "grain",
+                "oil",
+                "other"
+              ],
+              "description": "Category of the ingredient",
+              "nullable": true
+            },
+            "is_allergen": {
+              "type": "boolean",
+              "description": "Whether this ingredient is a common allergen. Boolean on this endpoint; /ingredients returns 0/1."
+            },
+            "quantity": {
+              "type": "string",
+              "description": "Quantity used, as a JSON string (MySQL DECIMAL). Example: \"50.00\".",
+              "nullable": true,
+              "example": "50.00"
+            },
+            "unit": {
+              "type": "string",
+              "description": "Unit of measurement (g, ml, each, etc.)",
+              "nullable": true
+            },
+            "preparation_note": {
+              "type": "string",
+              "description": "How the ingredient is prepared (chopped, minced, shredded, etc.)",
+              "nullable": true
+            },
+            "is_optional": {
+              "type": "boolean",
+              "description": "Whether the ingredient can be omitted by request"
+            },
+            "spice_level": {
+              "type": "string",
+              "description": "Spice level for spicy ingredients (mild, medium, hot)",
+              "nullable": true
+            },
+            "custom_attributes": {
+              "type": "object",
+              "description": "Additional JSON attributes for ingredient-specific details",
+              "nullable": true
+            }
+          }
+        },
+        "Ingredient": {
+          "type": "object",
+          "description": "A row of the ingredient master list (the `ingredients` table).",
+          "properties": {
+            "ingredient_id": {
+              "type": "integer",
+              "description": "The unique identifier of the ingredient"
+            },
+            "ingredient_name": {
+              "type": "string",
+              "description": "Name of the ingredient"
+            },
+            "category": {
+              "type": "string",
+              "enum": [
+                "protein",
+                "vegetable",
+                "spice",
+                "dairy",
+                "grain",
+                "oil",
+                "other"
+              ],
+              "nullable": true
+            },
+            "is_allergen": {
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ],
+              "description": "Whether this ingredient is a common allergen. Returned as 0/1 by this endpoint, unlike /menu/with-ingredients which returns a boolean."
+            },
+            "unit_type": {
+              "type": "string",
+              "description": "Default unit family for this ingredient, e.g. \"weight\" or \"volume\"",
+              "nullable": true
+            }
+          }
+        },
+        "Nutrition": {
+          "type": "object",
+          "description": "Per-menu-item macros (row of menu_item_nutrition).",
+          "properties": {
+            "item_id": {
+              "type": "integer",
+              "description": "Menu item this nutrition row belongs to"
+            },
+            "calories": {
+              "type": "integer",
+              "description": "Calories (integer)"
+            },
+            "protein": {
+              "type": "string",
+              "description": "Grams of protein as a JSON string (MySQL DECIMAL). Example: \"14.5\".",
+              "example": "14.5"
+            },
+            "fat": {
+              "type": "string",
+              "description": "Grams of fat as a JSON string (MySQL DECIMAL). Example: \"24.0\".",
+              "example": "24.0"
+            },
+            "carbs": {
+              "type": "string",
+              "description": "Grams of carbohydrates as a JSON string (MySQL DECIMAL). Example: \"48.0\".",
+              "example": "48.0"
+            }
+          }
+        },
+        "Patron": {
+          "type": "object",
+          "properties": {
+            "patron_id": {
+              "type": "integer",
+              "description": "Patron identifier"
+            },
+            "patron_name": {
+              "type": "string",
+              "description": "Display name"
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "description": "Patron email address"
+            }
+          }
+        },
+        "Error": {
+          "type": "object",
+          "description": "Error envelope used across the API.",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      }
+    },
+    "paths": {
+      "/import/menu-items": {
+        "post": {
+          "summary": "Import multiple menu items",
+          "tags": [
+            "Import"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "item_name": {
+                        "type": "string"
+                      },
+                      "item_desc": {
+                        "type": "string"
+                      },
+                      "price": {
+                        "type": "number"
+                      },
+                      "item_type": {
+                        "type": "string"
+                      },
+                      "ingredients": {
+                        "type": "string"
+                      },
+                      "dietary_tags": {
+                        "type": "string"
+                      },
+                      "style": {
+                        "type": "string"
+                      },
+                      "rating": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Menu items imported successfully"
+            },
+            "500": {
+              "description": "Failed to import menu items"
+            }
+          }
+        }
+      },
+      "/import/beverages": {
+        "post": {
+          "summary": "Import multiple beverages",
+          "tags": [
+            "Import"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "beverage_name": {
+                        "type": "string"
+                      },
+                      "beverage_desc": {
+                        "type": "string"
+                      },
+                      "price": {
+                        "type": "number"
+                      },
+                      "item_type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Beverages imported successfully"
+            },
+            "500": {
+              "description": "Failed to import beverages"
+            }
+          }
+        }
+      },
+      "/import/nutrition": {
+        "post": {
+          "summary": "Import nutrition data for menu items",
+          "tags": [
+            "Import"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "item_id": {
+                        "type": "integer"
+                      },
+                      "calories": {
+                        "type": "integer"
+                      },
+                      "protein": {
+                        "type": "number"
+                      },
+                      "fat": {
+                        "type": "number"
+                      },
+                      "carbs": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Nutrition data imported successfully"
+            },
+            "500": {
+              "description": "Failed to import nutrition data"
+            }
+          }
+        }
+      },
+      "/import/patrons": {
+        "post": {
+          "summary": "Import multiple patrons",
+          "tags": [
+            "Import"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "patron_name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Patrons imported successfully"
+            },
+            "500": {
+              "description": "Failed to import patrons"
+            }
+          }
+        }
+      },
+      "/import/orders": {
+        "post": {
+          "summary": "Import multiple orders",
+          "tags": [
+            "Import"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "patron_id": {
+                        "type": "integer"
+                      },
+                      "total_amount": {
+                        "type": "number"
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "item_id": {
+                              "type": "integer"
+                            },
+                            "quantity": {
+                              "type": "integer"
+                            },
+                            "price_at_time": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Orders imported successfully"
+            },
+            "500": {
+              "description": "Failed to import orders"
+            }
+          }
+        }
+      },
+      "/import/beverage-pairs": {
+        "post": {
+          "summary": "Import menu item beverage pairings",
+          "tags": [
+            "Import"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "menu_item_id": {
+                        "type": "integer"
+                      },
+                      "beverage_id": {
+                        "type": "integer"
+                      },
+                      "pairing_strength": {
+                        "type": "string",
+                        "enum": [
+                          "perfect",
+                          "great",
+                          "good"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Beverage pairings imported successfully"
+            },
+            "500": {
+              "description": "Failed to import beverage pairings"
+            }
+          }
+        }
+      },
+      "/import/menu-item-ingredients": {
+        "post": {
+          "summary": "Import menu item ingredients (bridge table)",
+          "tags": [
+            "Import"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "menu_item_id": {
+                        "type": "integer"
+                      },
+                      "ingredient_name": {
+                        "type": "string"
+                      },
+                      "quantity": {
+                        "type": "number"
+                      },
+                      "unit": {
+                        "type": "string"
+                      },
+                      "preparation_note": {
+                        "type": "string"
+                      },
+                      "is_optional": {
+                        "type": "boolean"
+                      },
+                      "spice_level": {
+                        "type": "string"
+                      },
+                      "custom_attributes": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Menu item ingredients imported successfully"
+            },
+            "500": {
+              "description": "Failed to import menu item ingredients"
+            }
+          }
+        }
+      },
+      "/api/images/menu-item/{menuItemId}": {
+        "get": {
+          "tags": [
+            "Images"
+          ],
+          "summary": "Get image by menu item ID",
+          "description": "Retrieves the most recent image associated with a specific menu item",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "menuItemId",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "The ID of the menu item whose image is to be retrieved"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Image returned successfully",
+              "content": {
+                "image/*": {
+                  "schema": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "No image found for this menu item"
+            },
+            "500": {
+              "description": "Server error occurred while retrieving the image"
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Images"
+          ],
+          "summary": "Upload an image for a menu item",
+          "description": "Uploads a new image file and associates it with a specific menu item in the database",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "menuItemId",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the menu item to associate with the uploaded image"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "image"
+                  ],
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "format": "binary",
+                      "description": "The image file to upload (JPEG, PNG, GIF, etc.)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Image uploaded successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Image uploaded successfully"
+                      },
+                      "imageId": {
+                        "type": "integer",
+                        "example": 42
+                      },
+                      "menuItemId": {
+                        "type": "integer",
+                        "example": 15
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request - invalid file or menu item ID"
+            },
+            "404": {
+              "description": "Menu item not found"
+            },
+            "500": {
+              "description": "Server error occurred during upload"
+            }
+          }
+        }
+      },
+      "/api/images/upload/{menuItemId}": {
+        "post": {
+          "tags": [
+            "Images"
+          ],
+          "summary": "Upload an image for a menu item (alternative route)",
+          "description": "Alternative endpoint for uploading an image file for a menu item. Functionally identical to '/api/images/menu-item/{menuItemId}'",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "menuItemId",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "ID of the menu item to associate with the uploaded image"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "image"
+                  ],
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "format": "binary",
+                      "description": "The image file to upload (JPEG, PNG, GIF, etc.)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Image uploaded successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Image uploaded successfully"
+                      },
+                      "imageId": {
+                        "type": "integer",
+                        "example": 42
+                      },
+                      "menuItemId": {
+                        "type": "integer",
+                        "example": 15
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request - invalid file or menu item ID"
+            },
+            "404": {
+              "description": "Menu item not found"
+            },
+            "500": {
+              "description": "Server error occurred during upload"
+            }
+          }
+        }
+      },
+      "/api/images/{imageId}": {
+        "get": {
+          "tags": [
+            "Images"
+          ],
+          "summary": "Get menu item image by image ID",
+          "description": "Retrieves an image from the database by its unique image ID",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "imageId",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "The unique identifier for the image"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Image returned successfully",
+              "content": {
+                "image/*": {
+                  "schema": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Image not found in the database"
+            },
+            "500": {
+              "description": "Server error occurred while retrieving the image"
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Images"
+          ],
+          "summary": "Delete a specific image by ID",
+          "description": "Removes a specific image from the database based on its unique ID",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "imageId",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "The unique identifier of the image to delete"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Image deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Image deleted successfully"
+                      },
+                      "imageId": {
+                        "type": "integer",
+                        "example": 42
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid image ID"
+            },
+            "404": {
+              "description": "Image not found"
+            },
+            "500": {
+              "description": "Server error occurred while deleting the image"
+            }
+          }
+        }
+      },
+      "/ingredients": {
+        "get": {
+          "summary": "Get all ingredients",
+          "tags": [
+            "Ingredients"
+          ],
+          "responses": {
+            "200": {
+              "description": "List of all ingredients",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Ingredient"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new ingredient",
+          "tags": [
+            "Ingredients"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ingredient_name"
+                  ],
+                  "properties": {
+                    "ingredient_name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string",
+                      "enum": [
+                        "protein",
+                        "vegetable",
+                        "spice",
+                        "dairy",
+                        "grain",
+                        "oil",
+                        "other"
+                      ]
+                    },
+                    "is_allergen": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "unit_type": {
+                      "type": "string",
+                      "enum": [
+                        "weight",
+                        "volume",
+                        "count",
+                        "each"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Ingredient created successfully"
+            },
+            "400": {
+              "description": "Invalid input"
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        }
+      },
+      "/ingredients/{id}": {
+        "get": {
+          "summary": "Get ingredient by ID",
+          "tags": [
+            "Ingredients"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Ingredient ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Ingredient found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Ingredient"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Ingredient not found"
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        },
+        "put": {
+          "summary": "Update an ingredient",
+          "tags": [
+            "Ingredients"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Ingredient ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ingredient_name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    },
+                    "is_allergen": {
+                      "type": "boolean"
+                    },
+                    "unit_type": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Ingredient updated successfully"
+            },
+            "404": {
+              "description": "Ingredient not found"
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete an ingredient",
+          "tags": [
+            "Ingredients"
+          ],
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Ingredient ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Ingredient deleted successfully"
+            },
+            "404": {
+              "description": "Ingredient not found"
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        }
+      },
+      "/menu": {
+        "get": {
+          "tags": [
+            "Menu Items"
+          ],
+          "summary": "Get all menu items",
+          "description": "Retrieves all menu items from the database (basic info only, no ingredients)",
+          "responses": {
+            "200": {
+              "description": "A list of menu items",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/MenuItem"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        }
+      },
+      "/menu/with-ingredients": {
+        "get": {
+          "tags": [
+            "Menu Items"
+          ],
+          "summary": "Get all menu items with ingredients",
+          "description": "Retrieves all menu items with their complete ingredient details nested inside. This is the endpoint the AI consultant consumes for allergen- and macro-aware recommendations.\n",
+          "responses": {
+            "200": {
+              "description": "A list of menu items with ingredients",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/MenuItemWithIngredients"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        }
+      },
+      "/menu/{id}/with-ingredients": {
+        "get": {
+          "tags": [
+            "Menu Items"
+          ],
+          "summary": "Get a menu item by ID with its ingredients",
+          "description": "Retrieves a single menu item with its complete ingredient details nested inside",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Menu item ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Menu item with ingredients found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MenuItemWithIngredients"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Menu item not found"
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        }
+      },
+      "/menu/createMenuItem": {
+        "post": {
+          "tags": [
+            "Menu Items"
+          ],
+          "summary": "Create a new menu item",
+          "description": "Adds a new menu item to the database",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "item_name",
+                    "price",
+                    "item_type"
+                  ],
+                  "properties": {
+                    "item_name": {
+                      "type": "string"
+                    },
+                    "item_desc": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "number",
+                      "description": "Price in USD"
+                    },
+                    "item_type": {
+                      "type": "string"
+                    },
+                    "dietary_tags": {
+                      "type": "string",
+                      "description": "Comma-separated when more than one, e.g. \"vegan, gluten-free\""
+                    },
+                    "style": {
+                      "type": "string"
+                    },
+                    "rating": {
+                      "type": "number"
+                    },
+                    "image_id": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Menu item created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MenuItem"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input"
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        }
+      },
+      "/menu/{id}": {
+        "put": {
+          "tags": [
+            "Menu Items"
+          ],
+          "summary": "Update a menu item",
+          "description": "Updates an existing menu item in the database",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Menu item ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "item_name": {
+                      "type": "string",
+                      "description": "The name of the menu item"
+                    },
+                    "item_desc": {
+                      "type": "string",
+                      "description": "Description of the menu item"
+                    },
+                    "price": {
+                      "type": "number",
+                      "description": "Price of the menu item"
+                    },
+                    "item_type": {
+                      "type": "string",
+                      "description": "Type/category of the menu item"
+                    }
+                  },
+                  "example": {
+                    "item_name": "Updated Burger",
+                    "item_desc": "A delicious updated burger with special sauce",
+                    "price": 12.99,
+                    "item_type": "Main Course"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Menu item updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "Menu item updated successfully"
+                      },
+                      "itemId": {
+                        "type": "integer",
+                        "example": 1
+                      },
+                      "affectedRows": {
+                        "type": "integer",
+                        "example": 1
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input"
+            },
+            "404": {
+              "description": "Menu item not found"
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Menu Items"
+          ],
+          "summary": "Delete a menu item",
+          "description": "Deletes a menu item from the database",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Menu item ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Menu item deleted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Menu item not found"
+            },
+            "500": {
+              "description": "Server error"
+            }
+          }
+        }
+      },
+      "/api/patrons": {
+        "get": {
+          "tags": [
+            "Patrons"
+          ],
+          "summary": "List all patrons",
+          "description": "Returns every patron without password fields.",
+          "responses": {
+            "200": {
+              "description": "A list of patrons",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Patron"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to fetch patrons",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/patrons/{id}": {
+        "get": {
+          "tags": [
+            "Patrons"
+          ],
+          "summary": "Get a single patron by ID",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "required": true,
+              "schema": {
+                "type": "integer"
+              },
+              "description": "Patron ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The patron",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Patron"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Patron not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to fetch patron",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/auth/login": {
+        "post": {
+          "tags": [
+            "Patrons"
+          ],
+          "summary": "Authenticate a patron",
+          "description": "Returns the patron record on success. No token is issued: the session is identified by patron_id thereafter, and no endpoint currently requires an Authorization header.\n",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "email",
+                    "password"
+                  ],
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "password": {
+                      "type": "string",
+                      "format": "password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Authenticated",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "patron": {
+                        "$ref": "#/components/schemas/Patron"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Email and password required",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Invalid credentials",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Login failed",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/notify-service": {
+        "post": {
+          "tags": [
+            "Patrons"
+          ],
+          "summary": "Request table service (\"ring the bell\")",
+          "description": "Validates that the patron exists, then logs a service notification. The staff-facing delivery mechanism is not implemented yet; the call currently succeeds without notifying anyone.\n",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "patron_id"
+                  ],
+                  "properties": {
+                    "patron_id": {
+                      "type": "integer"
+                    },
+                    "table_id": {
+                      "type": "integer",
+                      "description": "Optional table number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Notification accepted",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Service notified"
+                      },
+                      "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "patron_id is required",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Patron not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to notify service",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/create-payment-intent": {
+        "post": {
+          "tags": [
+            "Payments"
+          ],
+          "summary": "Create a Stripe PaymentIntent for a cart",
+          "description": "Recalculates the total from the database, rejects the request if the client-supplied amount differs by more than one cent, creates the PaymentIntent, then writes the order and its line items.\n",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "items",
+                    "patron_id",
+                    "amount"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "item_id",
+                          "quantity"
+                        ],
+                        "properties": {
+                          "item_id": {
+                            "type": "integer"
+                          },
+                          "quantity": {
+                            "type": "integer",
+                            "minimum": 1
+                          }
+                        }
+                      }
+                    },
+                    "patron_id": {
+                      "type": "integer"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "description": "Client-calculated total in USD; must match the server total within $0.01"
+                    }
+                  }
+                },
+                "example": {
+                  "items": [
+                    {
+                      "item_id": 55,
+                      "quantity": 2
+                    }
+                  ],
+                  "patron_id": 12,
+                  "amount": 16
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "PaymentIntent created and order recorded",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "clientSecret": {
+                        "type": "string",
+                        "description": "Stripe client secret used by Stripe.js to confirm payment"
+                      },
+                      "orderId": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Missing items, patron_id, or a valid amount",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "A cart item does not exist",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "405": {
+              "description": "Client amount does not match the server-calculated total",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Amount mismatch"
+                      },
+                      "frontend_amount": {
+                        "type": "number"
+                      },
+                      "backend_amount": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Stripe or database failure",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/payment-details/{paymentIntentId}": {
+        "get": {
+          "tags": [
+            "Payments"
+          ],
+          "summary": "Get payment status for an order",
+          "description": "Looks up the PaymentIntent at Stripe and joins the local order row.",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "paymentIntentId",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "description": "Stripe PaymentIntent ID, e.g. pi_3N..."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Payment status",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "stripe_status": {
+                        "type": "string",
+                        "example": "succeeded"
+                      },
+                      "local_status": {
+                        "type": "string",
+                        "nullable": true,
+                        "example": "paid"
+                      },
+                      "amount": {
+                        "type": "number",
+                        "description": "Amount in USD (Stripe cents divided by 100)"
+                      },
+                      "currency": {
+                        "type": "string",
+                        "example": "usd"
+                      },
+                      "order_id": {
+                        "type": "integer",
+                        "nullable": true
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Payment intent ID is required",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Stripe lookup or database failure",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/webhook": {
+        "post": {
+          "tags": [
+            "Payments"
+          ],
+          "summary": "Stripe webhook receiver",
+          "description": "Mounted before express.json() so the raw body survives signature verification. Updates orders on payment_intent.succeeded, payment_intent.payment_failed, and similar events. Configure this URL in the Stripe dashboard; callers are Stripe, not clients.\n",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Raw Stripe event object"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Event received and processed (or ignored)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "received": {
+                        "type": "boolean",
+                        "example": true
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Signature verification or event handling failed",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/app": {
+        "get": {
+          "tags": [
+            "System"
+          ],
+          "summary": "Redirect to the NVRS web app",
+          "description": "302 redirect to the currently deployed frontend on Cloud Run. The target is the dev Cloud Run service; update it when production is promoted.\n",
+          "responses": {
+            "302": {
+              "description": "Redirect to the frontend",
+              "headers": {
+                "Location": {
+                  "schema": {
+                    "type": "string"
+                  },
+                  "description": "Frontend URL"
+                }
+              }
+            }
+          }
+        }
+      },
+      "/nutrition": {
+        "get": {
+          "tags": [
+            "Nutrition"
+          ],
+          "summary": "Retrieve all item nutrition records",
+          "description": "Returns every row of menu_item_nutrition. Macro values (protein, fat, carbs) are MySQL DECIMALs and therefore arrive as JSON strings; only calories is numeric. Join to /menu by item_id.\n",
+          "responses": {
+            "200": {
+              "description": "A JSON array of macro rows",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Nutrition"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Database or server error"
+            }
+          }
+        }
+      }
+    },
+    "tags": [
+      {
+        "name": "Import",
+        "description": "Bulk data import endpoints"
+      },
+      {
+        "name": "Ingredients",
+        "description": "Ingredient management endpoints"
+      },
+      {
+        "name": "Menu Items",
+        "description": "Menu item endpoints"
+      },
+      {
+        "name": "Patrons",
+        "description": "Patron accounts, login, and table service requests"
+      },
+      {
+        "name": "Payments",
+        "description": "Stripe payment intents and order settlement"
+      },
+      {
+        "name": "System",
+        "description": "Non-data routes (frontend entrypoint, docs)"
+      },
+      {
+        "name": "Nutrition",
+        "description": "Per-item macro data"
+      }
+    ]
+  },
+  "customOptions": {}
+};
+  url = options.swaggerUrl || url
+  var urls = options.swaggerUrls
+  var customOptions = options.customOptions
+  var spec1 = options.swaggerDoc
+  var swaggerOptions = {
+    spec: spec1,
+    url: url,
+    urls: urls,
+    dom_id: '#swagger-ui',
+    deepLinking: true,
+    presets: [
+      SwaggerUIBundle.presets.apis,
+      SwaggerUIStandalonePreset
+    ],
+    plugins: [
+      SwaggerUIBundle.plugins.DownloadUrl
+    ],
+    layout: "StandaloneLayout"
+  }
+  for (var attrname in customOptions) {
+    swaggerOptions[attrname] = customOptions[attrname];
+  }
+  var ui = SwaggerUIBundle(swaggerOptions)
+
+  if (customOptions.oauth) {
+    ui.initOAuth(customOptions.oauth)
+  }
+
+  if (customOptions.preauthorizeApiKey) {
+    const key = customOptions.preauthorizeApiKey.authDefinitionKey;
+    const value = customOptions.preauthorizeApiKey.apiKeyValue;
+    if (!!key && !!value) {
+      const pid = setInterval(() => {
+        const authorized = ui.preauthorizeApiKey(key, value);
+        if(!!authorized) clearInterval(pid);
+      }, 500)
+
+    }
+  }
+
+  if (customOptions.authAction) {
+    ui.authActions.authorize(customOptions.authAction)
+  }
+
+  window.ui = ui
+}
