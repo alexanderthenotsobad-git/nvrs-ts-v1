@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const groq = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY,
-  baseURL: "https://api.groq.com/openai/v1",
-});
+const groq = process.env.GROQ_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.GROQ_API_KEY,
+      baseURL: "https://api.groq.com/openai/v1",
+    })
+  : null;
 
 export async function POST(request: NextRequest) {
+  if (!groq) {
+    return NextResponse.json({ error: 'Groq API key not configured' }, { status: 500 });
+  }
+
   try {
     const formData = await request.formData();
     const audioFile = formData.get('audio') as File;
