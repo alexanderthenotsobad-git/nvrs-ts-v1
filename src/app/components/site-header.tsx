@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, LogOut, Menu, ShoppingBag, UserRound, X } from "lucide-react";
+import { ChevronDown, LogOut, Menu, ShoppingBag, UserRound, X, Sparkles, MessageSquare } from "lucide-react";
 import { useState } from "react";
 
 import { useOrderTray } from "@/context/OrderTrayContext";
@@ -11,10 +11,9 @@ import { VRSLogo } from "./vrs-logo";
 const NAV = [
   { href: "#menu", label: "Menu" },
   { href: "#table", label: "At the table" },
-  { href: "#story", label: "The room" },
 ];
 
-export function SiteHeader({ onSignIn }: { onSignIn: () => void }) {
+export function SiteHeader({ onSignIn, onOpenAI }: { onSignIn: () => void; onOpenAI: () => void }) {
   const { user, signOut } = useUserRole();
   const { getTotalItems, toggleOrderTray, isOrderTrayOpen } = useOrderTray();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -90,6 +89,17 @@ export function SiteHeader({ onSignIn }: { onSignIn: () => void }) {
             </button>
           )}
 
+          {/* AI Trigger - Header variant (desktop) */}
+          <button
+            type="button"
+            onClick={onOpenAI}
+            aria-label="Consult the menu expert"
+            className="hidden h-10 items-center gap-2 rounded-full bg-olive px-4 text-sm font-semibold text-cream shadow-soft transition-transform hover:-translate-y-0.5 hover:bg-olive/90 sm:flex"
+          >
+            <Sparkles aria-hidden="true" className="size-4" />
+            <span>Menu expert</span>
+          </button>
+
           <button
             type="button"
             onClick={toggleOrderTray}
@@ -125,19 +135,34 @@ export function SiteHeader({ onSignIn }: { onSignIn: () => void }) {
       {mobileOpen && (
         <div className="border-t border-line bg-cream px-4 pb-5 pt-3 shadow-lift md:hidden">
           <nav aria-label="Mobile" className="flex flex-col">
-            {NAV.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={closeMobile}
-                className="flex items-center justify-between border-b border-line/70 py-3.5 font-display text-2xl font-medium tracking-[-0.02em]"
-              >
-                {link.label}
-                <span aria-hidden="true" className="text-muted">
-                  ↗
-                </span>
-              </a>
-            ))}
+            <a
+              href="#menu"
+              onClick={closeMobile}
+              className="flex items-center justify-between border-b border-line/70 py-3.5 font-display text-2xl font-medium tracking-[-0.02em]"
+            >
+              Menu
+              <span aria-hidden="true" className="text-muted">↗</span>
+            </a>
+            {/* Menu expert right below Menu */}
+            <a
+              href="#"
+              onClick={(e) => { e.preventDefault(); closeMobile(); onOpenAI(); }}
+              className="flex items-center justify-between border-b border-line/70 py-3.5 font-display text-2xl font-medium tracking-[-0.02em]"
+            >
+              <span className="flex items-center gap-2">
+                <MessageSquare className="size-5 text-butter" />
+                Menu expert
+              </span>
+              <Sparkles className="size-5 text-butter" />
+            </a>
+            <a
+              href="#table"
+              onClick={closeMobile}
+              className="flex items-center justify-between border-b border-line/70 py-3.5 font-display text-2xl font-medium tracking-[-0.02em]"
+            >
+              At the table
+              <span aria-hidden="true" className="text-muted">↗</span>
+            </a>
           </nav>
 
           {user ? (

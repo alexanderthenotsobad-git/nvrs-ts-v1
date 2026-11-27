@@ -6,6 +6,8 @@ import {
   ShoppingBag,
   UserRound,
   UtensilsCrossed,
+  MessageSquare,
+  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -13,7 +15,7 @@ import { useOrderTray } from "@/context/OrderTrayContext";
 import { useUserRole } from "@/context/UserContext";
 import { cn, formatCurrency, initials } from "@/lib/utils";
 
-export function MobileTabBar({ onSignIn }: { onSignIn: () => void }) {
+export function MobileTabBar({ onSignIn, onOpenAI }: { onSignIn: () => void; onOpenAI: () => void }) {
   const { user } = useUserRole();
   const {
     getTotalItems,
@@ -52,7 +54,7 @@ export function MobileTabBar({ onSignIn }: { onSignIn: () => void }) {
         aria-label="Mobile app"
         className="safe-bottom border-t border-line bg-cream/95 px-2 pt-1.5 backdrop-blur-xl"
       >
-        <div className="mx-auto grid max-w-md grid-cols-4">
+        <div className="mx-auto grid max-w-md grid-cols-5">
           <a
             href="#top"
             onClick={() => setActive("home")}
@@ -89,6 +91,17 @@ export function MobileTabBar({ onSignIn }: { onSignIn: () => void }) {
               )}
             </span>
             Tray
+          </button>
+          <button
+            type="button"
+            onClick={onOpenAI}
+            className="flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl text-[9px] font-bold uppercase tracking-[0.08em] text-muted"
+          >
+            <span className="relative">
+              <MessageSquare aria-hidden="true" className="size-4" />
+              <Sparkles className="absolute -right-1 -top-1 size-3 text-butter" />
+            </span>
+            Ask AI
           </button>
           <button
             type="button"

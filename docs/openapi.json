@@ -1,0 +1,57 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "NVRS Menu API",
+    "version": "1.0.0",
+    "description": "API documentation for Node Virtual Restaurant Solutions",
+    "contact": { "name": "Alexander Gomez" },
+    "license": { "name": "ISC" }
+  },
+  "servers": [{ "url": "https://ai.alexanderthenotsobad.us", "description": "Public NVRS API (Apache → localhost:3003)" }],
+  "security": [],
+  "paths": {
+    "/import/menu-items": { "post": { "summary": "Import multiple menu items", "tags": ["Import"] } },
+    "/import/beverages": { "post": { "summary": "Import multiple beverages", "tags": ["Import"] } },
+    "/import/nutrition": { "post": { "summary": "Import nutrition data for menu items", "tags": ["Import"] } },
+    "/import/patrons": { "post": { "summary": "Import multiple patrons", "tags": ["Import"] } },
+    "/import/orders": { "post": { "summary": "Import multiple orders", "tags": ["Import"] } },
+    "/import/beverage-pairs": { "post": { "summary": "Import menu item beverage pairings", "tags": ["Import"] } },
+    "/import/menu-item-ingredients": { "post": { "summary": "Import menu item ingredients (bridge table)", "tags": ["Import"] } },
+    "/api/images/menu-item/{menuItemId}": {
+      "get": { "summary": "Get image by menu item ID" },
+      "post": { "summary": "Upload an image for a menu item" }
+    },
+    "/api/images/upload/{menuItemId}": { "post": { "summary": "Upload an image for a menu item (alternative route)" } },
+    "/api/images/{imageId}": {
+      "get": { "summary": "Get menu item image by image ID" },
+      "delete": { "summary": "Delete a specific image by ID" }
+    },
+    "/ingredients": { "get": { "summary": "Get all ingredients" }, "post": { "summary": "Create a new ingredient" } },
+    "/ingredients/{id}": { "get": { "summary": "Get ingredient by ID" }, "put": { "summary": "Update an ingredient" }, "delete": { "summary": "Delete an ingredient" } },
+    "/menu": { "get": { "summary": "Get all menu items" } },
+    "/menu/with-ingredients": { "get": { "summary": "Get all menu items with ingredients" } },
+    "/menu/{id}/with-ingredients": { "get": { "summary": "Get a menu item by ID with its ingredients" } },
+    "/menu/createMenuItem": { "post": { "summary": "Create a new menu item" } },
+    "/menu/{id}": { "put": { "summary": "Update a menu item" }, "delete": { "summary": "Delete a menu item" } },
+    "/api/patrons": { "get": { "summary": "List all patrons" } },
+    "/api/patrons/{id}": { "get": { "summary": "Get a single patron by ID" } },
+    "/api/auth/login": { "post": { "summary": "Authenticate a patron" } },
+    "/api/notify-service": { "post": { "summary": "Request table service (ring the bell)" } },
+    "/api/create-payment-intent": { "post": { "summary": "Create a Stripe PaymentIntent for a cart" } },
+    "/api/payment-details/{paymentIntentId}": { "get": { "summary": "Get payment status for an order" } },
+    "/api/webhook": { "post": { "summary": "Stripe webhook receiver" } },
+    "/app": { "get": { "summary": "Redirect to the NVRS web app" } },
+    "/nutrition": { "get": { "summary": "Retrieve all item nutrition records" } }
+  },
+  "components": {
+    "schemas": {
+      "MenuItem": { "type": "object", "properties": {} },
+      "MenuItemWithIngredients": { "type": "object", "properties": {} },
+      "IngredientDetail": { "type": "object", "properties": {} },
+      "Ingredient": { "type": "object", "properties": {} },
+      "Nutrition": { "type": "object", "properties": {} },
+      "Patron": { "type": "object", "properties": {} },
+      "Error": { "type": "object", "properties": {} }
+    }
+  }
+}

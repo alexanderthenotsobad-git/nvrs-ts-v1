@@ -15,15 +15,17 @@ import { SiteHeader } from "@/components/site-header";
 import { TableSection } from "@/components/table-section";
 import { ToastProvider } from "@/components/toast";
 import { TrayDrawer } from "@/components/tray-drawer";
+import { AIPanel } from "@/components/ai-panel";
 import { OrderTrayProvider } from "@/context/OrderTrayContext";
 import { UserRoleProvider } from "@/context/UserContext";
 
 function Experience() {
   const [signInOpen, setSignInOpen] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
 
   return (
     <>
-      <SiteHeader onSignIn={() => setSignInOpen(true)} />
+      <SiteHeader onSignIn={() => setSignInOpen(true)} onOpenAI={() => setAiPanelOpen(true)} />
       <main>
         <Hero />
         <Marquee />
@@ -34,9 +36,10 @@ function Experience() {
         <RoomSection />
       </main>
       <SiteFooter onSignIn={() => setSignInOpen(true)} />
-      <MobileTabBar onSignIn={() => setSignInOpen(true)} />
+      <MobileTabBar onSignIn={() => setSignInOpen(true)} onOpenAI={() => setAiPanelOpen(true)} />
       <SignInPanel open={signInOpen} onClose={() => setSignInOpen(false)} />
       <TrayDrawer />
+      <AIPanel isOpen={aiPanelOpen} onClose={() => setAiPanelOpen(false)} />
     </>
   );
 }
