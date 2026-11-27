@@ -24,7 +24,6 @@ export function AIPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recording, setRecording] = useState(false);
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -46,7 +45,7 @@ export function AIPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
     if (!isOpen && recording) {
       stopRecording();
     }
-  }, [isOpen]);
+  }, [isOpen, recording]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -87,7 +86,7 @@ export function AIPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
           return next;
         });
       }
-    } catch (err) {
+    } catch {
       setError("The menu expert is unavailable. Please try again.");
       setMessages(prev => prev.slice(0, -1));
     } finally {
@@ -97,7 +96,7 @@ export function AIPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
 
   const handleQuickPrompt = (prompt: string) => {
     setInput(prompt);
-    handleSubmit({ preventDefault: () => {} } as any);
+    handleSubmit({ preventDefault: () => {} } as React.FormEvent);
   };
 
   const startRecording = async () => {
@@ -117,11 +116,10 @@ export function AIPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       };
       
       mediaRecorderRef.current = recorder;
-      setAudioChunks(chunks);
       recorder.start();
       setRecording(true);
       setError(null);
-    } catch (err) {
+    } catch {
       setError("Microphone access denied");
     }
   };
@@ -152,8 +150,8 @@ export function AIPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
       if (text?.trim()) {
         setInput(prev => prev + (prev ? ' ' : '') + text.trim());
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Transcription failed');
+    } catch {
+      setError("Transcription failed");
     }
   };
 
@@ -205,7 +203,7 @@ export function AIPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
             <div className="flex flex-col items-center justify-center h-full text-center text-muted py-8">
               <MessageSquare className="size-12 text-muted/30 mb-3" />
               <p className="font-display text-lg font-semibold">What are you in the mood for?</p>
-              <p className="mt-1 text-sm max-w-xs">Tell me your goals — protein targets, allergies, macros — and I'll find the right plate.</p>
+              <p className="mt-1 text-sm max-w-xs">Tell me your goals — protein targets, allergies, macros — and I&apos;ll find the right plate.</p>
               <div className="mt-4 flex flex-wrap gap-1.5 justify-center">
                 {QUICK_PROMPTS.map(prompt => (
                   <button
